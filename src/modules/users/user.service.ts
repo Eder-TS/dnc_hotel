@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { User } from '@prisma/client';
 import { CreateUserDTO } from './domain/dto/createUser.dto';
+import { UpdateUsrDTO } from './domain/dto/updateUser.dto';
 
 @Injectable()
 export class UserService {
@@ -11,7 +12,7 @@ export class UserService {
     return await this.prisma.user.findMany();
   }
 
-  async show(id: string): Promise<User> {
+  async show(id: number): Promise<User> {
     const user = await this.isIdExists(id);
     return user;
   }
@@ -30,7 +31,7 @@ export class UserService {
     return await this.prisma.user.create({ data: body });
   }
 
-  async updateUser(id: any, body: any): Promise<User> {
+  async updateUser(id: number, body: UpdateUsrDTO): Promise<User> {
     await this.isIdExists(id);
     return await this.prisma.user.update({
       where: { id: Number(id) },
@@ -38,16 +39,15 @@ export class UserService {
     });
   }
 
-  async deleteUser(id: string): Promise<void> {
+  async deleteUser(id: number): Promise<void> {
     await this.isIdExists(id);
     await this.prisma.user.delete({ where: { id: Number(id) } });
     return;
   }
 
-  private async isIdExists(id: string) {
-    const idToFind = Number(id);
+  private async isIdExists(id: number) {
     const userExists = await this.prisma.user.findUnique({
-      where: { id: idToFind },
+      where: { id: id },
     });
 
     if (userExists === null)

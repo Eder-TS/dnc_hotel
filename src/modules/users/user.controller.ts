@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
 } from '@nestjs/common';
@@ -27,7 +28,7 @@ export class UserController {
   // Posso desestruturar params com o decorator (como está abaixo),
   // ou @Param() params: string[] e passar para o método params.id.
   @Get(':id')
-  async show(@Param('id') id: string) {
+  async show(@Param('id', ParseIntPipe) id: number) {
     return await this.userService.show(id);
   }
 
@@ -36,13 +37,14 @@ export class UserController {
     return await this.userService.createUser(body);
   }
 
+  // Usando intercepatdor ParseIntPipe para já parsear a id.
   @Patch(':id')
-  async updateUser(@Param('id') id: string, @Body() body: any) {
+  async updateUser(@Param('id', ParseIntPipe) id: number, @Body() body: any) {
     return await this.userService.updateUser(id, body);
   }
 
   @Delete(':id')
-  async deleteUser(@Param('id') id: string) {
+  async deleteUser(@Param('id', ParseIntPipe) id: number) {
     return await this.userService.deleteUser(id);
   }
 }
