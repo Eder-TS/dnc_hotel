@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { User } from '@prisma/client';
 import { CreateUserDTO } from './domain/dto/createUser.dto';
 import { UpdateUsrDTO } from './domain/dto/updateUser.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -18,6 +19,7 @@ export class UserService {
   }
 
   async createUser(body: CreateUserDTO): Promise<User> {
+    body.password = await this.hashPassword(body.password);
     const emailExists = await this.prisma.user.findUnique({
       where: { email: body.email },
     });
@@ -33,6 +35,11 @@ export class UserService {
 
   async updateUser(id: number, body: UpdateUsrDTO): Promise<User> {
     await this.isIdExists(id);
+
+    if (body.password) {
+      body.password = await this.hashPassword(body.password);
+    }
+
     return await this.prisma.user.update({
       where: { id: Number(id) },
       data: body,
@@ -54,5 +61,9 @@ export class UserService {
       throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
 
     return userExists;
+  }
+
+  private async hashPassword(password: string) {
+    return await bcrypt.hash(password, 10);
   }
 }

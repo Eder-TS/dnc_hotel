@@ -13,9 +13,11 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDTO } from './domain/dto/createUser.dto';
 import { LoggingInterceptor } from 'src/shared/interceptors/logging.interceptor';
+import { ParamId } from 'src/shared/decorators/paramId.decorator';
 
 // Inserido o interceptor aqui antes do controller, ele será aplicado para todas as rotas.
-@UseInterceptors(LoggingInterceptor)
+//@UseInterceptors(LoggingInterceptor)
+
 // Aqui inserir o prefixo da rota.
 @Controller('users')
 export class UserController {
@@ -31,8 +33,9 @@ export class UserController {
 
   // Posso desestruturar params com o decorator (como está abaixo),
   // ou @Param() params: string[] e passar para o método params.id.
+  // Neste caso estou aplicando um decorator personalizado.
   @Get(':id')
-  async show(@Param('id', ParseIntPipe) id: number) {
+  async show(@ParamId() id: number) {
     return await this.userService.show(id);
   }
 
