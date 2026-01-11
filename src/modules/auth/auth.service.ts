@@ -1,15 +1,21 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
+import { Role, User } from '@prisma/client';
 import { AuthLoginDTO } from './domain/dto/authLogin.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import bcrypt from 'bcrypt';
+import { UserService } from '../users/user.service';
+import { CreateUserDTO } from '../users/domain/dto/createUser.dto';
+import { AuthRegisterDTO } from './domain/dto/authRegister.dto';
 
+// Foi importado o módulo de User para que o acesso aos recursos de
+// User sejam feitos através dele, mantendo a coerência do código.
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly prisma: PrismaService,
+    private readonly userService: UserService,
   ) {}
 
   private async generateJwtToken(user: User) {
@@ -30,9 +36,21 @@ export class AuthService {
   }
 
   async login({ email, password }: AuthLoginDTO) {
-    const user = await this.prisma.user.findUnique({ where: { email } });
+    const user = await this.userService.findByEmail(email);
     if (!user || !(await bcrypt.compare(password, user.password)))
       throw new UnauthorizedException('Invalid credentials.');
+    return await this.generateJwtToken(user);
+  }
+
+  async register(body: AuthRegisterDTO) {
+    const newUser: CreateUserDTO = {
+      name: body.name,
+      email: body.email,
+      password: body.password,
+      role: body.role ?? Role.USER,
+    };
+    const user = await this.userService.createUser(newUser);
+
     return await this.generateJwtToken(user);
   }
 }

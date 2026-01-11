@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AuthController } from './auth.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UserModule } from '../users/user.module';
 
 // Aqui seguindo com ConfigModule (que no exemplo da aula não foi usado) e
 // a sugestão do chatGPT para que a variável de ambiente fosse carregada no momento correto.
@@ -17,6 +18,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
     }),
     PrismaModule,
+    UserModule,
   ],
   providers: [AuthService],
   controllers: [AuthController],

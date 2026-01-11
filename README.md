@@ -1,3 +1,8 @@
+## Contexto da aula:
+Desenvolver uma aplicação para gestão de hotéis, onde ADMIN são os proprietários/administradores dos hotéis e USER são os hóspedes.
+
+---
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>

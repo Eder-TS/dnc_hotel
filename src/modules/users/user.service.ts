@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDTO } from './domain/dto/createUser.dto';
 import { UpdateUsrDTO } from './domain/dto/updateUser.dto';
@@ -20,6 +25,20 @@ export class UserService {
     return user;
   }
 
+  async findByEmail(email: string) {
+    // Professor passou "select: userSelectFields" para o método porém,
+    // no método de autenticação é preciso comparar a senha, então não estou usando
+    // este select.
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    // Para o método de autenticação não deveria haver este retorno para evitar
+    // que um invasor tente acertar o email.
+    if (!user) throw new NotFoundException('Email not found.');
+    return user;
+  }
+
   async createUser(body: CreateUserDTO) {
     body.password = await this.hashPassword(body.password);
     const emailExists = await this.prisma.user.findUnique({
@@ -34,7 +53,7 @@ export class UserService {
 
     return await this.prisma.user.create({
       data: body,
-      select: userSelectFields,
+      //select: userSelectFields,
     });
   }
 
