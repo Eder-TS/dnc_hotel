@@ -2,11 +2,12 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Role, User } from '@prisma/client';
 import { AuthLoginDTO } from './domain/dto/authLogin.dto';
-import { PrismaService } from '../prisma/prisma.service';
 import bcrypt from 'bcrypt';
 import { UserService } from '../users/user.service';
 import { CreateUserDTO } from '../users/domain/dto/createUser.dto';
 import { AuthRegisterDTO } from './domain/dto/authRegister.dto';
+import { AuthResetPasswordDTO } from './domain/dto/authResetPassword.dto';
+import { AuthForgotPasswordDTO } from './domain/dto/authForgotPassword.dto';
 
 // Foi importado o módulo de User para que o acesso aos recursos de
 // User sejam feitos através dele, mantendo a coerência do código.
@@ -14,11 +15,10 @@ import { AuthRegisterDTO } from './domain/dto/authRegister.dto';
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly prisma: PrismaService,
     private readonly userService: UserService,
   ) {}
 
-  private async generateJwtToken(user: User) {
+  private async generateJwtToken(user: User, expiresIn: number = 86400) {
     const payload = { sub: user.id, name: user.name };
     const options = {
       // TS estava acusando erro em signAsync por nenhuma sobrescrição bater com a chamada
@@ -28,7 +28,7 @@ export class AuthService {
       // em runtime '1d' funciona em JS mas o TS não aceita pois as unidades possíveis de
       // expiresIn são number, StringValue (tipo próprio) e undefined.
       // StringValue é template literal: `${number}D`, sendo D's possíveis: D, Day, Days, Y, Year...
-      expiresIn: 60 * 60 * 20,
+      expiresIn: expiresIn,
       issuer: 'dnc_hotel',
       audience: 'users',
     };
@@ -52,5 +52,31 @@ export class AuthService {
     const user = await this.userService.createUser(newUser);
 
     return await this.generateJwtToken(user);
+  }
+
+  async resetPassword({ token, newPassword }: AuthResetPasswordDTO) {
+    try {
+      // No exemplo da aula não foi usado try/catch e o retorno do método
+      // era desconstruído podendo ser validado com if.
+      // Aqui será tratada a falha de verifyAsync catch. O retorno possível vem com
+      // o payload do token, então posso usá-lo.
+      const decoded = await this.jwtService.verifyAsync(token);
+      const user = await this.userService.updateUser(Number(decoded.sub), {
+        password: newPassword,
+      });
+
+      return await this.generateJwtToken(user);
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token.');
+    }
+  }
+
+  // Melhorar DTO
+  async forgotPassword(email: string) {
+    const user = await this.userService.findByEmail(email);
+    const expiresIn = 1800;
+    const token = await this.generateJwtToken(user, expiresIn);
+
+    return token;
   }
 }

@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDTO } from './domain/dto/createUser.dto';
-import { UpdateUsrDTO } from './domain/dto/updateUser.dto';
+import { UpdateUserDTO } from './domain/dto/updateUser.dto';
 import * as bcrypt from 'bcrypt';
 import { userSelectFields } from '../prisma/utils/userSelectFields';
 
@@ -57,7 +57,7 @@ export class UserService {
     });
   }
 
-  async updateUser(id: number, body: UpdateUsrDTO) {
+  async updateUser(id: number, body: UpdateUserDTO) {
     await this.isIdExists(id);
 
     if (body.password) {
@@ -67,7 +67,7 @@ export class UserService {
     return await this.prisma.user.update({
       where: { id: Number(id) },
       data: body,
-      select: userSelectFields,
+      //select: userSelectFields,
     });
   }
 

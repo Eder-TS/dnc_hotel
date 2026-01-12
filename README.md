@@ -1,5 +1,6 @@
 ## Contexto da aula:
 Desenvolver uma aplicação para gestão de hotéis, onde ADMIN são os proprietários/administradores dos hotéis e USER são os hóspedes.
+11/1/26 Precisa melhorar os DTOS de user e auth.
 
 ---
 
