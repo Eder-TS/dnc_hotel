@@ -8,12 +8,14 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDTO } from './domain/dto/createUser.dto';
 import { LoggingInterceptor } from 'src/shared/interceptors/logging.interceptor';
 import { ParamId } from 'src/shared/decorators/paramId.decorator';
+import { AuthGuard } from 'src/shared/guards/auth.guard';
 
 // Inserido o interceptor aqui antes do controller, ele será aplicado para todas as rotas.
 //@UseInterceptors(LoggingInterceptor)
@@ -25,6 +27,8 @@ export class UserController {
 
   // Posso alterar o status de retorno com o decorator @HttpCode(),
   // porém o código pode mudar o conteúdo da resposta.
+  // Aqui usando o guard na rota list.
+  @UseGuards(AuthGuard)
   @Get()
   @HttpCode(200)
   async list() {
@@ -49,7 +53,7 @@ export class UserController {
   async updateUser(@Param('id', ParseIntPipe) id: number, @Body() body: any) {
     return await this.userService.updateUser(id, body);
   }
-  // Após implementar o inteceptor, posso aplicá-lo a qualquer rota (que ele faça sentido).
+  // Após implementar o interceptor, posso aplicá-lo a qualquer rota (que ele faça sentido).
   @UseInterceptors(LoggingInterceptor)
   @Delete(':id')
   async deleteUser(@Param('id', ParseIntPipe) id: number) {

@@ -3,6 +3,7 @@ import { PrismaModule } from './modules/prisma/prisma.module';
 import { UserModule } from './modules/users/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { SharedModule } from './shared/shared.module';
 
 // Todos os módulos devem ser importados aqui para que sejam carregados pela aplicação.
 // Diferente da aula, tive de seguir a documentação do NestJS e trabalhar com
@@ -16,6 +17,7 @@ import { ConfigModule } from '@nestjs/config';
     PrismaModule,
     UserModule,
     AuthModule,
+    SharedModule,
   ],
 })
 export class AppModule {}

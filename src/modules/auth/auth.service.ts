@@ -8,6 +8,7 @@ import { CreateUserDTO } from '../users/domain/dto/createUser.dto';
 import { AuthRegisterDTO } from './domain/dto/authRegister.dto';
 import { AuthResetPasswordDTO } from './domain/dto/authResetPassword.dto';
 import { AuthForgotPasswordDTO } from './domain/dto/authForgotPassword.dto';
+import { AuthValidTokenDTO } from './domain/dto/authValidToken.dto';
 
 // Foi importado o módulo de User para que o acesso aos recursos de
 // User sejam feitos através dele, mantendo a coerência do código.
@@ -17,23 +18,6 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
   ) {}
-
-  private async generateJwtToken(user: User, expiresIn: number = 86400) {
-    const payload = { sub: user.id, name: user.name };
-    const options = {
-      // TS estava acusando erro em signAsync por nenhuma sobrescrição bater com a chamada
-      // pois o professor passou expiresIn: '1d'.
-      // Solução do chatGPT foi tipar expiresIn para Number com 60 * 60 * 20.
-      // Olhando as definições do método foi observado que o quê estava errado era a sintaxe:
-      // em runtime '1d' funciona em JS mas o TS não aceita pois as unidades possíveis de
-      // expiresIn são number, StringValue (tipo próprio) e undefined.
-      // StringValue é template literal: `${number}D`, sendo D's possíveis: D, Day, Days, Y, Year...
-      expiresIn: expiresIn,
-      issuer: 'dnc_hotel',
-      audience: 'users',
-    };
-    return { access_token: await this.jwtService.signAsync(payload, options) };
-  }
 
   async login({ email, password }: AuthLoginDTO) {
     const user = await this.userService.findByEmail(email);
@@ -55,20 +39,13 @@ export class AuthService {
   }
 
   async resetPassword({ token, newPassword }: AuthResetPasswordDTO) {
-    try {
-      // No exemplo da aula não foi usado try/catch e o retorno do método
-      // era desconstruído podendo ser validado com if.
-      // Aqui será tratada a falha de verifyAsync catch. O retorno possível vem com
-      // o payload do token, então posso usá-lo.
-      const decoded = await this.jwtService.verifyAsync(token);
-      const user = await this.userService.updateUser(Number(decoded.sub), {
-        password: newPassword,
-      });
+    const { valid, decoded } = await this.validateToken(token);
+    if (!valid) throw new UnauthorizedException('Invalid token.');
+    const user = await this.userService.updateUser(Number(decoded?.sub), {
+      password: newPassword,
+    });
 
-      return await this.generateJwtToken(user);
-    } catch (error) {
-      throw new UnauthorizedException('Invalid token.');
-    }
+    return await this.generateJwtToken(user);
   }
 
   // Melhorar DTO
@@ -78,5 +55,36 @@ export class AuthService {
     const token = await this.generateJwtToken(user, expiresIn);
 
     return token;
+  }
+
+  private async generateJwtToken(user: User, expiresIn: number = 86400) {
+    const payload = { sub: user.id, name: user.name };
+    const options = {
+      // TS estava acusando erro em signAsync por nenhuma sobrescrição bater com a chamada
+      // pois o professor passou expiresIn: '1d'.
+      // Solução do chatGPT foi tipar expiresIn para Number com 60 * 60 * 20.
+      // Olhando as definições do método foi observado que o quê estava errado era a sintaxe:
+      // em runtime '1d' funciona em JS mas o TS não aceita pois as unidades possíveis de
+      // expiresIn são number, StringValue (tipo próprio) e undefined.
+      // StringValue é template literal: `${number}D`, sendo D's possíveis: D, Day, Days, Y, Year...
+      expiresIn: expiresIn,
+      issuer: 'dnc_hotel',
+      audience: 'users',
+    };
+    return { access_token: await this.jwtService.signAsync(payload, options) };
+  }
+
+  async validateToken(token: string): Promise<AuthValidTokenDTO> {
+    try {
+      // No exemplo da aula não foi usado try/catch e o retorno do método
+      // era desconstruído podendo ser validado com if.
+      // Aqui será tratada a falha de verifyAsync com catch. O retorno possível vem com
+      // o payload do token, então posso usá-lo.
+      const decoded = await this.jwtService.verifyAsync(token);
+
+      return { valid: true, decoded };
+    } catch (error) {
+      return { valid: false };
+    }
   }
 }
