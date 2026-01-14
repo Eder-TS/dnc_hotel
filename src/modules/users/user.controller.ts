@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -16,6 +17,9 @@ import { CreateUserDTO } from './domain/dto/createUser.dto';
 import { LoggingInterceptor } from 'src/shared/interceptors/logging.interceptor';
 import { ParamId } from 'src/shared/decorators/paramId.decorator';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
+import express from 'express';
+import { User } from 'src/shared/decorators/user.decorator';
+import * as client from '@prisma/client';
 
 // Inserido o interceptor aqui antes do controller, ele será aplicado para todas as rotas.
 //@UseInterceptors(LoggingInterceptor)
@@ -31,7 +35,17 @@ export class UserController {
   @UseGuards(AuthGuard)
   @Get()
   @HttpCode(200)
-  async list() {
+
+  // Usando o @Req para extrair o user que é injetado após a validação com Guard.
+  // Aqui ficou um pouco diferente pois tive que usar module augmentation no Express
+  // e adicionar o parâmetro user a request (isso já foi feito em outra matéria).
+  //async list(@Req() { user }: express.Request) {
+
+  // Agora usando o decorator @User. Neste caso o tipo vai ser User definido
+  // no schema do prisma. Se eu definir um filtro, ele retorna apenas o campo
+  // filtrado.
+  async list(@User('email') user: client.User) {
+    console.log(user);
     return await this.userService.list();
   }
 
