@@ -20,10 +20,15 @@ import { AuthGuard } from 'src/shared/guards/auth.guard';
 import express from 'express';
 import { User } from 'src/shared/decorators/user.decorator';
 import * as client from '@prisma/client';
+import { Roles } from 'src/shared/decorators/role.decorators';
+import { RoleGuard } from 'src/shared/guards/role.guard';
 
 // Inserido o interceptor aqui antes do controller, ele será aplicado para todas as rotas.
 //@UseInterceptors(LoggingInterceptor)
 
+//Usando o UseGuard aqui todos os guards declarados como parâmetro irão atuar em todas as rotas.
+//Observar que a ordem da cada guard importa. Neste caso passar o AuthGuard e depois o RoleGuard.
+@UseGuards(AuthGuard, RoleGuard)
 // Aqui inserir o prefixo da rota.
 @Controller('users')
 export class UserController {
@@ -32,7 +37,7 @@ export class UserController {
   // Posso alterar o status de retorno com o decorator @HttpCode(),
   // porém o código pode mudar o conteúdo da resposta.
   // Aqui usando o guard na rota list.
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   @Get()
   @HttpCode(200)
 
@@ -57,6 +62,11 @@ export class UserController {
     return await this.userService.show(id);
   }
 
+  // Usando o decorator @Roles() criado em aula para inserir no context qual tipo
+  // de usuário pode acessar a rota. O bloqueio será feito por um Guard. Foi inserido
+  // como metadata. Mesmo que o guard seja global para este controller, apenas as rotas
+  // que tiverem os metadados inseridos terão o Role verificado.
+  @Roles(client.Role.ADMIN)
   @Post()
   async createUser(@Body() body: CreateUserDTO) {
     return await this.userService.createUser(body);
