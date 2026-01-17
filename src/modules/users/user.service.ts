@@ -40,17 +40,16 @@ export class UserService {
   }
 
   async createUser(body: CreateUserDTO) {
-    body.password = await this.hashPassword(body.password);
     const emailExists = await this.prisma.user.findUnique({
       where: { email: body.email },
     });
-
     if (emailExists)
       throw new HttpException(
         'This email already exists.',
         HttpStatus.CONFLICT,
       );
 
+    body.password = await this.hashPassword(body.password);
     return await this.prisma.user.create({
       data: body,
       //select: userSelectFields,

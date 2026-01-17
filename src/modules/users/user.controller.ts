@@ -22,6 +22,7 @@ import { User } from 'src/shared/decorators/user.decorator';
 import * as client from '@prisma/client';
 import { Roles } from 'src/shared/decorators/role.decorators';
 import { RoleGuard } from 'src/shared/guards/role.guard';
+import { UserMatchGuard } from 'src/shared/guards/userMatch.guard';
 
 // Inserido o interceptor aqui antes do controller, ele será aplicado para todas as rotas.
 //@UseInterceptors(LoggingInterceptor)
@@ -72,11 +73,20 @@ export class UserController {
     return await this.userService.createUser(body);
   }
 
+  // Usado o Guard para validar a id se bate com userId.
+  // User já foi lançado com AuthGuard para todo o controller.
+  @UseGuards(UserMatchGuard)
+
   // Usando intercepatdor ParseIntPipe para já parsear a id.
   @Patch(':id')
   async updateUser(@Param('id', ParseIntPipe) id: number, @Body() body: any) {
     return await this.userService.updateUser(id, body);
   }
+
+  // Usado o Guard para validar a id se bate com userId.
+  // User já foi lançado com AuthGuard para todo o controller.
+  @UseGuards(UserMatchGuard)
+
   // Após implementar o interceptor, posso aplicá-lo a qualquer rota (que ele faça sentido).
   @UseInterceptors(LoggingInterceptor)
   @Delete(':id')
