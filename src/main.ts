@@ -11,6 +11,16 @@ async function bootstrap() {
   // Para interceptar os erros dos validadores.
   app.useGlobalPipes(new ValidationPipe());
 
+  // O CORS é configurado aqui no main.
+  // Posso apenas usar enableCors sem parâmetros para qualquer cliente acessar ou
+  // posso especificar alguns parâmetros para limitar os endereços e métodos de acesso.
+  app.enableCors({
+    origin: 'http://localhost:3001',
+    methods: 'GET, PATCH, POST, DELETE',
+    //allowedHeaders: 'Content-type, Accept',
+    //credentials: true,
+  });
+
   // Se precisar de um interceptor para todas as rotas da aplicação
   // então devo inserir o mesmo aqui no main:
   // app.useGlobalInterceptors(LoggingInteceptor) .
