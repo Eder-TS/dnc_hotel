@@ -4,6 +4,7 @@ import { UserModule } from './modules/users/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { SharedModule } from './shared/shared.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 // Todos os módulos devem ser importados aqui para que sejam carregados pela aplicação.
 // Diferente da aula, tive de seguir a documentação do NestJS e trabalhar com
@@ -18,6 +19,14 @@ import { SharedModule } from './shared/shared.module';
     UserModule,
     AuthModule,
     SharedModule,
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000, // tempo em milissegundos
+        limit: 10, // requisições
+      },
+    ]),
   ],
+  // Declarando um provider para que o throttler seja aplicado a toda a aplicação.
+  providers: [{ provide: 'APP_GUARD', useClass: ThrottlerGuard }],
 })
 export class AppModule {}

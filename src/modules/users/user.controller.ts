@@ -23,6 +23,7 @@ import * as client from '@prisma/client';
 import { Roles } from 'src/shared/decorators/role.decorators';
 import { RoleGuard } from 'src/shared/guards/role.guard';
 import { UserMatchGuard } from 'src/shared/guards/userMatch.guard';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 
 // Inserido o interceptor aqui antes do controller, ele será aplicado para todas as rotas.
 //@UseInterceptors(LoggingInterceptor)
@@ -34,6 +35,11 @@ import { UserMatchGuard } from 'src/shared/guards/userMatch.guard';
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
+
+  // Aplicando o limiter à esta rota.
+  // Se usar o limiter globalmente no controller e quero deixar uma rota desprotegida
+  // por qualquer motivo, então uso o @SkipThrottle().
+  @UseGuards(ThrottlerGuard)
 
   // Posso alterar o status de retorno com o decorator @HttpCode(),
   // porém o código pode mudar o conteúdo da resposta.
@@ -54,6 +60,9 @@ export class UserController {
     console.log(user);
     return await this.userService.list();
   }
+
+  // Aqui usando uma configuração específica do limiter para esta rota.
+  @Throttle({ default: { limit: 3, ttl: 5000 } })
 
   // Posso desestruturar params com o decorator (como está abaixo),
   // ou @Param() params: string[] e passar para o método params.id.
