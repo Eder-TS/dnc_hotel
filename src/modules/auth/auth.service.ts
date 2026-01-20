@@ -9,6 +9,8 @@ import { AuthRegisterDTO } from './domain/dto/authRegister.dto';
 import { AuthResetPasswordDTO } from './domain/dto/authResetPassword.dto';
 import { AuthForgotPasswordDTO } from './domain/dto/authForgotPassword.dto';
 import { AuthValidTokenDTO } from './domain/dto/authValidToken.dto';
+import { MailerService } from '@nestjs-modules/mailer';
+import { templateHTML } from './utils/templateHTML';
 
 // Foi importado o módulo de User para que o acesso aos recursos de
 // User sejam feitos através dele, mantendo a coerência do código.
@@ -17,6 +19,7 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
+    private readonly mailerService: MailerService,
   ) {}
 
   async login({ email, password }: AuthLoginDTO) {
@@ -54,7 +57,13 @@ export class AuthService {
     const expiresIn = 1800;
     const token = await this.generateJwtToken(user, expiresIn);
 
-    return token;
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Reset password - DNC Hotel',
+      html: templateHTML(user.name, token.access_token),
+    });
+
+    return `A verification code has been sent to ${email}`;
   }
 
   private async generateJwtToken(user: User, expiresIn: number = 86400) {
