@@ -3,10 +3,15 @@
 import 'dotenv/config';
 import { defineConfig } from 'prisma/config';
 
-// Remover datasource daqui. Deve ser inserido no constructor do service que extender PrismaClient.
+// O datasource fica aqui para rodar processos do prisma fora de runtime.
+// A declaração de datasource no service é para usar em runtime.
+// Depois de garantir versões iguais de prisma e @prisma/client, nada mais falhou aqui.
 export default defineConfig({
   schema: 'prisma/schema.prisma',
   migrations: {
     path: 'prisma/migrations',
+  },
+  datasource: {
+    url: process.env.DATABASE_URL!,
   },
 });

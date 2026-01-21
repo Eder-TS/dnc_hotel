@@ -10,6 +10,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Depois de garantir versões iguais de prisma e @prisma/client, nada mais falhou aqui.
 datasource db {
   provider = "postgresql"
 }
