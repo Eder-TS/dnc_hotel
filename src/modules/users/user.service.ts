@@ -9,6 +9,8 @@ import { CreateUserDTO } from './domain/dto/createUser.dto';
 import { UpdateUserDTO } from './domain/dto/updateUser.dto';
 import * as bcrypt from 'bcrypt';
 import { userSelectFields } from '../prisma/utils/userSelectFields';
+import { join, resolve } from 'path';
+import { existsSync, statSync, unlinkSync } from 'fs';
 
 @Injectable()
 export class UserService {
@@ -52,7 +54,7 @@ export class UserService {
     body.password = await this.hashPassword(body.password);
     return await this.prisma.user.create({
       data: body,
-      //select: userSelectFields,
+      select: userSelectFields,
     });
   }
 
@@ -66,7 +68,7 @@ export class UserService {
     return await this.prisma.user.update({
       where: { id: Number(id) },
       data: body,
-      //select: userSelectFields,
+      select: userSelectFields,
     });
   }
 
@@ -74,6 +76,32 @@ export class UserService {
     await this.isIdExists(id);
     await this.prisma.user.delete({ where: { id: Number(id) } });
     return;
+  }
+
+  // Melhorar DTO
+  async uploadAvatar(id: number, avatarFilename: string) {
+    const user = await this.isIdExists(id);
+
+    // Cria o caminho até onde as imagens são guardadas.
+    // Na aula o professor passou __dirname e o caminho relativo, porém quebrou pois
+    // o TS compilou para dist/. process.cwd() funciona em várias situações (compilação em dist, docker, ...)
+    const directory = resolve(process.cwd(), 'uploads');
+    if (user.avatar) {
+      // Junta o diretório com o nome do arquivo para formar o caminho completo.
+      const userAvatarFilePath = join(directory, user.avatar);
+
+      // Verifica a existência do arquivo. Num projeto passado ocorriam erros durante
+      // alguns testes pois o arquivo havia sido apagado manualmente.
+      // Na aula o professor usou o método statSync, existsSync funciona melhor.
+      if (existsSync(userAvatarFilePath)) {
+        // From node.js: unlink() deletes a name from the filesystem.  If that name was the
+        // last link to a file and no processes have the file open, the file
+        // is deleted and the space it was using is made available for reuse.
+        unlinkSync(userAvatarFilePath);
+      }
+    }
+
+    return await this.updateUser(id, { avatar: avatarFilename });
   }
 
   private async isIdExists(id: number) {

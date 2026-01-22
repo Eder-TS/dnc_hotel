@@ -2,13 +2,17 @@ import {
   Body,
   Controller,
   Delete,
+  FileTypeValidator,
   Get,
   HttpCode,
+  MaxFileSizeValidator,
   Param,
+  ParseFilePipe,
   ParseIntPipe,
   Patch,
   Post,
   Req,
+  UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -17,13 +21,14 @@ import { CreateUserDTO } from './domain/dto/createUser.dto';
 import { LoggingInterceptor } from 'src/shared/interceptors/logging.interceptor';
 import { ParamId } from 'src/shared/decorators/paramId.decorator';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
-import express from 'express';
 import { User } from 'src/shared/decorators/user.decorator';
 import * as client from '@prisma/client';
 import { Roles } from 'src/shared/decorators/role.decorators';
 import { RoleGuard } from 'src/shared/guards/role.guard';
 import { UserMatchGuard } from 'src/shared/guards/userMatch.guard';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileValidationInterceptor } from 'src/shared/interceptors/fileValidation.interceptor';
 
 // Inserido o interceptor aqui antes do controller, ele será aplicado para todas as rotas.
 //@UseInterceptors(LoggingInterceptor)
@@ -101,5 +106,32 @@ export class UserController {
   @Delete(':id')
   async deleteUser(@Param('id', ParseIntPipe) id: number) {
     return await this.userService.deleteUser(id);
+  }
+
+  @UseInterceptors(FileInterceptor('avatar'), FileValidationInterceptor)
+  @Post('avatar')
+  async uploadAvatar(
+    @User('id') id: number,
+    @UploadedFile(
+      // Pipe para validar arquivos
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({
+            // Apenas arquivos de imagem serão aceitos.
+            // Precisa especificar pra o NestJS para olhar o MIME type.
+            // Pode precisar especificar skipMagicNumber.
+            fileType: /^image\/(jpeg|png|webp)$/,
+            fallbackToMimetype: true,
+          }),
+          new MaxFileSizeValidator({
+            // Limitando o tamanho do arquivo.
+            maxSize: 7 * 1024,
+          }),
+        ],
+      }),
+    )
+    avatar: Express.Multer.File,
+  ) {
+    return await this.userService.uploadAvatar(id, avatar.filename);
   }
 }
