@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { SharedModule } from './shared/shared.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { HotelsModule } from './modules/hotels/hotels.module';
 
 // Todos os módulos devem ser importados aqui para que sejam carregados pela aplicação.
 // Diferente da aula, tive de seguir a documentação do NestJS e trabalhar com
@@ -36,6 +37,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
         from: `"dnc-hotel"<${process.env.EMAIL_USER}>`,
       },
     }),
+
+    HotelsModule,
   ],
   // Declarando um provider para que o throttler seja aplicado a toda a aplicação.
   providers: [{ provide: 'APP_GUARD', useClass: ThrottlerGuard }],
