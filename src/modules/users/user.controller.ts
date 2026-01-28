@@ -11,7 +11,6 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,

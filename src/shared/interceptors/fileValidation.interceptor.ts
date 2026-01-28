@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { catchError, Observable, throwError } from 'rxjs';
 import fs from 'fs';
+import { Request } from 'express';
 
 // Validator para excluir arquivo que está sendo salvo quando o mesmo não passa
 // no validator de tipo e tamanho.
@@ -21,7 +22,7 @@ export class FileValidationInterceptor implements NestInterceptor {
     return next.handle().pipe(
       catchError((err) => {
         if (err instanceof BadRequestException) {
-          const request = context.switchToHttp().getRequest();
+          const request = context.switchToHttp().getRequest<Request>();
           const file = request.file;
 
           if (file) {

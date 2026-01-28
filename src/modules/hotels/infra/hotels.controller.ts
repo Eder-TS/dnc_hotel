@@ -8,6 +8,12 @@ import {
   Delete,
   Query,
   UseGuards,
+  UploadedFile,
+  ParseFilePipe,
+  FileTypeValidator,
+  MaxFileSizeValidator,
+  ParseIntPipe,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CreateHotelDto } from '../domain/dto/create-hotel.dto';
 import { UpdateHotelDto } from '../domain/dto/update-hotel.dto';
@@ -25,6 +31,9 @@ import { Roles } from 'src/shared/decorators/role.decorators';
 import { Role } from '@prisma/client';
 import { OwnerHotelGuard } from 'src/shared/guards/ownerHotel.guard';
 import { User } from 'src/shared/decorators/user.decorator';
+import { UploadImageHotelService } from '../services/uploadImageHotel.service';
+import { FileValidationInterceptor } from 'src/shared/interceptors/fileValidation.interceptor';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @UseGuards(AuthGuard, RoleGuard)
 @Controller('hotels')
@@ -37,6 +46,7 @@ export class HotelsController {
     private readonly findHotelByOwner: FindHotelByOwnerService,
     private readonly removeHotelService: RemoveHotelService,
     private readonly updateHotelService: UpdateHotelService,
+    private readonly uploadImageHotelService: UploadImageHotelService,
   ) {}
 
   @Roles(Role.ADMIN)
@@ -78,14 +88,39 @@ export class HotelsController {
   @UseGuards(OwnerHotelGuard)
   @Roles(Role.ADMIN)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateHotelDto: UpdateHotelDto) {
-    return this.updateHotelService.execute(+id, updateHotelDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateHotelDto: UpdateHotelDto,
+  ) {
+    return this.updateHotelService.execute(id, updateHotelDto);
+  }
+
+  @UseInterceptors(FileInterceptor('imageHotel'), FileValidationInterceptor)
+  @Patch('images/:hotelId')
+  uploadImage(
+    @Param('hotelId', ParseIntPipe) id: number,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({
+            fileType: /^image\/(jpeg|png|webp)$/,
+            fallbackToMimetype: true,
+          }),
+          new MaxFileSizeValidator({
+            maxSize: 2048 * 1024,
+          }),
+        ],
+      }),
+    )
+    image: Express.Multer.File,
+  ) {
+    return this.uploadImageHotelService.execute(id, image.filename);
   }
 
   @UseGuards(OwnerHotelGuard)
   @Roles(Role.ADMIN)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.removeHotelService.execute(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.removeHotelService.execute(id);
   }
 }
