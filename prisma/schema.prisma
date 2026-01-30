@@ -20,6 +20,12 @@ enum Role {
   USER
 }
 
+enum ReservationsStatus {
+  PENDING
+  APPROVED
+  CANCELLED
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String
@@ -60,7 +66,7 @@ model Reservation {
   checkIn DateTime
   checkOut DateTime
   total Float
-  approved Boolean @default(false)
+  status ReservationsStatus @default(PENDING)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
