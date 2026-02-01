@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CreateHotelDto } from '../domain/dto/create-hotel.dto';
 // Usando type para resolver problema de injeção de interface, o quê não existe.
 import type { IHotelRepository } from '../domain/repositories/Ihotel.repository';
-import { HOTEL_REPOSITORY } from '../infra/hotelRepository.token';
+import { HOTEL_REPOSITORY } from '../utils/hotelRepository.token';
 
 @Injectable()
 export class CreateHotelService {

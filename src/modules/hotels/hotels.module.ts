@@ -5,7 +5,7 @@ import { FindAllHotelService } from './services/findAllHotel.service';
 import { FindHotelByIdService } from './services/findHotelById.service';
 import { RemoveHotelService } from './services/removeHotel.service';
 import { UpdateHotelService } from './services/updateHotel.service';
-import { HOTEL_REPOSITORY } from './infra/hotelRepository.token';
+import { HOTEL_REPOSITORY } from './utils/hotelRepository.token';
 import { HotelsRepository } from './infra/hotels.repository';
 import { PrismaModule } from '../prisma/prisma.module';
 import { FindHotelByNameService } from './services/findHotelByName.service';
@@ -48,5 +48,8 @@ import { UploadImageHotelService } from './services/uploadImageHotel.service';
       useClass: HotelsRepository,
     },
   ],
+
+  // Exportando o token para poder ser usado fora do módulo.
+  exports: [HOTEL_REPOSITORY],
 })
 export class HotelsModule {}

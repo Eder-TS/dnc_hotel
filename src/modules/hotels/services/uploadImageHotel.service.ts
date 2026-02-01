@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { HOTEL_REPOSITORY } from '../infra/hotelRepository.token';
+import { HOTEL_REPOSITORY } from '../utils/hotelRepository.token';
 import type { IHotelRepository } from '../domain/repositories/Ihotel.repository';
 import { join, resolve } from 'path';
 import { existsSync, unlinkSync } from 'fs';
