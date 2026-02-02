@@ -10,7 +10,7 @@ import { AuthResetPasswordDTO } from './domain/dto/authResetPassword.dto';
 import { AuthValidTokenDTO } from './domain/dto/authValidToken.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { templateHTML } from './utils/templateHTML';
-import { UserSelectedFieldsDTO } from '../users/domain/dto/userSelectedFields.dto';
+import { IUserSelectedFieldsData } from '../users/domain/repositories/Iuser-Selected-Fields.data';
 
 // Foi importado o módulo de User para que o acesso aos recursos de
 // User sejam feitos através dele, mantendo a coerência do código.
@@ -67,7 +67,7 @@ export class AuthService {
   }
 
   private async generateJwtToken(
-    user: UserSelectedFieldsDTO,
+    user: IUserSelectedFieldsData,
     expiresIn: number = 86400,
   ) {
     const payload = { sub: user.id, name: user.name };

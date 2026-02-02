@@ -4,7 +4,9 @@ import { IHotelRepository } from '../domain/repositories/Ihotel.repository';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { UpdateHotelDto } from '../domain/dto/update-hotel.dto';
-import { AllHotelDTO } from '../domain/dto/allHotel.dto';
+import { AllHotelData } from '../domain/repositories/allHotel.data';
+import { IHotelAndOwnerData } from '../domain/repositories/Ihotel-and-owner.data';
+import { userSelectFields } from 'src/modules/prisma/utils/userSelectFields';
 
 @Injectable()
 export class HotelsRepository implements IHotelRepository {
@@ -14,9 +16,10 @@ export class HotelsRepository implements IHotelRepository {
     return this.prisma.hotel.create({ data });
   }
 
-  findHotelById(id: number): Promise<Hotel | null> {
+  findHotelById(id: number): Promise<IHotelAndOwnerData | null> {
     return this.prisma.hotel.findUnique({
       where: { id },
+      include: { owner: { select: userSelectFields } },
     });
   }
 
@@ -29,13 +32,12 @@ export class HotelsRepository implements IHotelRepository {
   }
 
   findHotelByOwner(ownerId: number): Promise<Hotel | null> {
-    console.log(ownerId);
     return this.prisma.hotel.findFirst({
       where: { ownerId },
     });
   }
 
-  async findHotels(offset: number, limit: number): Promise<AllHotelDTO> {
+  async findHotels(offset: number, limit: number): Promise<AllHotelData> {
     // Sempre que usar findMany lembrar que é possível fazer a paginação com
     // take e skip. take é número de itens que serão retornados e skip é o número de itens
     // que serão deixados de fora a partir do primeiro, como se fosse um offset.
