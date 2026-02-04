@@ -1,4 +1,4 @@
-export const templateHTML = (userName: string, token: string) => {
+export const templateHTMLSendToken = (userName: string, token: string) => {
   return `
     
         <div style="font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #333;">

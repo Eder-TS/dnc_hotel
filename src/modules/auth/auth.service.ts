@@ -9,8 +9,8 @@ import { AuthRegisterDTO } from './domain/dto/authRegister.dto';
 import { AuthResetPasswordDTO } from './domain/dto/authResetPassword.dto';
 import { AuthValidTokenDTO } from './domain/dto/authValidToken.dto';
 import { MailerService } from '@nestjs-modules/mailer';
-import { templateHTML } from './utils/templateHTML';
-import { IUserSelectedFieldsData } from '../users/domain/repositories/Iuser-Selected-Fields.data';
+import { templateHTMLSendToken } from './utils/templateHTMLSendToken';
+import { IUserSafeFieldsData } from '../users/domain/repositories/Iuser-safe-fields.data';
 
 // Foi importado o módulo de User para que o acesso aos recursos de
 // User sejam feitos através dele, mantendo a coerência do código.
@@ -60,14 +60,14 @@ export class AuthService {
     await this.mailerService.sendMail({
       to: email,
       subject: 'Reset password - DNC Hotel',
-      html: templateHTML(user.name, token.access_token),
+      html: templateHTMLSendToken(user.name, token.access_token),
     });
 
     return `A verification code has been sent to ${email}`;
   }
 
   private async generateJwtToken(
-    user: IUserSelectedFieldsData,
+    user: IUserSafeFieldsData,
     expiresIn: number = 86400,
   ) {
     const payload = { sub: user.id, name: user.name };

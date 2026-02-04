@@ -15,8 +15,8 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { UserService } from './user.service';
-import { CreateUserDTO } from './domain/dto/createUser.dto';
+import { UserService } from '../user.service';
+import { CreateUserDTO } from '../domain/dto/createUser.dto';
 import { LoggingInterceptor } from 'src/shared/interceptors/logging.interceptor';
 import { ParamId } from 'src/shared/decorators/paramId.decorator';
 import { AuthGuard } from 'src/shared/guards/auth.guard';

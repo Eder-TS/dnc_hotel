@@ -8,9 +8,10 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDTO } from './domain/dto/createUser.dto';
 import { UpdateUserDTO } from './domain/dto/updateUser.dto';
 import * as bcrypt from 'bcrypt';
-import { userSelectFields } from '../prisma/utils/userSelectFields';
+import { userSelectFields } from './infra/prisma/userSelectFields';
 import { join, resolve } from 'path';
 import { existsSync, unlinkSync } from 'fs';
+import { IUserSafeFieldsData } from './domain/repositories/Iuser-safe-fields.data';
 
 @Injectable()
 export class UserService {
@@ -22,7 +23,7 @@ export class UserService {
     });
   }
 
-  async show(id: number) {
+  async show(id: number): Promise<IUserSafeFieldsData> {
     const user = await this.isIdExists(id);
     return user;
   }
@@ -41,7 +42,7 @@ export class UserService {
     return user;
   }
 
-  async createUser(body: CreateUserDTO) {
+  async createUser(body: CreateUserDTO): Promise<IUserSafeFieldsData> {
     const emailExists = await this.prisma.user.findUnique({
       where: { email: body.email },
     });
@@ -58,7 +59,10 @@ export class UserService {
     });
   }
 
-  async updateUser(id: number, body: UpdateUserDTO) {
+  async updateUser(
+    id: number,
+    body: UpdateUserDTO,
+  ): Promise<IUserSafeFieldsData> {
     await this.isIdExists(id);
 
     if (body.password) {

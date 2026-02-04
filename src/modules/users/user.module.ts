@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserController } from './user.controller';
+import { UserController } from './infra/user.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AuthModule } from '../auth/auth.module';
 import { SharedModule } from 'src/shared/shared.module';
