@@ -5,8 +5,8 @@ import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { UpdateHotelDto } from '../domain/dto/update-hotel.dto';
 import { AllHotelData } from '../domain/repositories/allHotel.data';
-import { IHotelAndOwnerData } from '../domain/repositories/Ihotel-and-owner.data';
-import { userSelectFields } from 'src/modules/prisma/utils/userSelectFields';
+import { userSelectFields } from 'src/modules/users/infra/prisma/userSelectFields';
+import { IHotelWithOwnerData } from '../domain/repositories/Ihotel-with-owner.data';
 
 @Injectable()
 export class HotelsRepository implements IHotelRepository {
@@ -16,7 +16,7 @@ export class HotelsRepository implements IHotelRepository {
     return this.prisma.hotel.create({ data });
   }
 
-  findHotelById(id: number): Promise<IHotelAndOwnerData | null> {
+  findHotelById(id: number): Promise<IHotelWithOwnerData | null> {
     return this.prisma.hotel.findUnique({
       where: { id },
       include: { owner: { select: userSelectFields } },
