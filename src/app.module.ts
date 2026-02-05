@@ -8,6 +8,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HotelsModule } from './modules/hotels/hotels.module';
 import { ReservationsModule } from './modules/reservations/reservations.module';
+import { RedisModule } from '@nestjs-modules/ioredis';
 
 // Todos os módulos devem ser importados aqui para que sejam carregados pela aplicação.
 // Diferente da aula, tive de seguir a documentação do NestJS e trabalhar com
@@ -40,8 +41,11 @@ import { ReservationsModule } from './modules/reservations/reservations.module';
     }),
 
     HotelsModule,
-
     ReservationsModule,
+    RedisModule.forRoot({
+      type: 'single',
+      url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+    }),
   ],
   // Declarando um provider para que o throttler seja aplicado a toda a aplicação.
   providers: [{ provide: 'APP_GUARD', useClass: ThrottlerGuard }],
