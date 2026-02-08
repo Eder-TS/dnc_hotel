@@ -15,7 +15,6 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { UserService } from '../user.service';
 import { CreateUserDTO } from '../domain/dto/createUser.dto';
 import { LoggingInterceptor } from 'src/shared/interceptors/logging.interceptor';
 import { ParamId } from 'src/shared/decorators/paramId.decorator';
@@ -28,6 +27,13 @@ import { UserMatchGuard } from 'src/shared/guards/userMatch.guard';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileValidationInterceptor } from 'src/shared/interceptors/fileValidation.interceptor';
+import { ListUserService } from '../services/listUser.service';
+import { ShowUserService } from '../services/showUser.service';
+import { CreateUserService } from '../services/createUser.service';
+import { UpdateUserService } from '../services/updateUser.service';
+import { UpdateUserDTO } from '../domain/dto/updateUser.dto';
+import { DeleteUserService } from '../services/deleteUser.service';
+import { UploadAvatarUserService } from '../services/uploadAvatarUser.service';
 
 // Inserido o interceptor aqui antes do controller, ele será aplicado para todas as rotas.
 //@UseInterceptors(LoggingInterceptor)
@@ -38,7 +44,14 @@ import { FileValidationInterceptor } from 'src/shared/interceptors/fileValidatio
 // Aqui inserir o prefixo da rota.
 @Controller('users')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private readonly listUserService: ListUserService,
+    private readonly showUserService: ShowUserService,
+    private readonly createUserService: CreateUserService,
+    private readonly updateUserService: UpdateUserService,
+    private readonly deleteUserService: DeleteUserService,
+    private readonly uploadAvatarUserService: UploadAvatarUserService,
+  ) {}
 
   // Aplicando o limiter à esta rota.
   // Se usar o limiter globalmente no controller e quero deixar uma rota desprotegida
@@ -62,7 +75,7 @@ export class UserController {
   // filtrado.
   async list(@User('email') user: client.User) {
     console.log(user);
-    return await this.userService.list();
+    return await this.listUserService.execute();
   }
 
   // Aqui usando uma configuração específica do limiter para esta rota.
@@ -73,7 +86,7 @@ export class UserController {
   // Neste caso estou aplicando um decorator personalizado.
   @Get(':id')
   async show(@ParamId() id: number) {
-    return await this.userService.show(id);
+    return await this.showUserService.execute(id);
   }
 
   // Usando o decorator @Roles() criado em aula para inserir no context qual tipo
@@ -83,7 +96,7 @@ export class UserController {
   @Roles(client.Role.ADMIN)
   @Post()
   async createUser(@Body() body: CreateUserDTO) {
-    return await this.userService.createUser(body);
+    return await this.createUserService.execute(body);
   }
 
   // Usado o Guard para validar a id se bate com userId.
@@ -92,8 +105,11 @@ export class UserController {
 
   // Usando intercepatdor ParseIntPipe para já parsear a id.
   @Patch(':id')
-  async updateUser(@Param('id', ParseIntPipe) id: number, @Body() body: any) {
-    return await this.userService.updateUser(id, body);
+  async updateUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateUserDTO,
+  ) {
+    return await this.updateUserService.execute(id, body);
   }
 
   // Usado o Guard para validar a id se bate com userId.
@@ -104,7 +120,7 @@ export class UserController {
   @UseInterceptors(LoggingInterceptor)
   @Delete(':id')
   async deleteUser(@Param('id', ParseIntPipe) id: number) {
-    return await this.userService.deleteUser(id);
+    return await this.deleteUserService.execute(id);
   }
 
   @UseInterceptors(FileInterceptor('avatar'), FileValidationInterceptor)
@@ -131,6 +147,6 @@ export class UserController {
     )
     avatar: Express.Multer.File,
   ) {
-    return await this.userService.uploadAvatar(id, avatar.filename);
+    return await this.uploadAvatarUserService.execute(id, avatar.filename);
   }
 }

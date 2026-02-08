@@ -1,4 +1,4 @@
-import { IUserSafeFieldsData } from 'src/modules/users/domain/repositories/Iuser-safe-fields.data';
+import { IUserSafeFieldsData } from 'src/modules/users/domain/repositories/IuserSafeFields.data';
 
 export interface IHotelWithOwnerData {
   id: number;

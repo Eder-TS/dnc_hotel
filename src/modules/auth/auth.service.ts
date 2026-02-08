@@ -1,29 +1,39 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Role } from '@prisma/client';
 import { AuthLoginDTO } from './domain/dto/authLogin.dto';
 import bcrypt from 'bcrypt';
-import { UserService } from '../users/user.service';
 import { CreateUserDTO } from '../users/domain/dto/createUser.dto';
 import { AuthRegisterDTO } from './domain/dto/authRegister.dto';
 import { AuthResetPasswordDTO } from './domain/dto/authResetPassword.dto';
 import { AuthValidTokenDTO } from './domain/dto/authValidToken.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { templateHTMLSendToken } from './utils/templateHTMLSendToken';
-import { IUserSafeFieldsData } from '../users/domain/repositories/Iuser-safe-fields.data';
+import { IUserSafeFieldsData } from '../users/domain/repositories/IuserSafeFields.data';
+import { FindUserByEmailService } from '../users/services/findUserByEmail.service ';
+import { CreateUserService } from '../users/services/createUser.service';
+import { UpdateUserService } from '../users/services/updateUser.service';
+import { USER_REPOSITORY } from '../users/utils/userRepository.token';
+import type { IUserRepository } from '../users/domain/repositories/IuserRepository';
 
 // Foi importado o módulo de User para que o acesso aos recursos de
 // User sejam feitos através dele, mantendo a coerência do código.
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(USER_REPOSITORY)
+    private readonly userRepository: IUserRepository,
+
     private readonly jwtService: JwtService,
-    private readonly userService: UserService,
+    private readonly findUserByEmailService: FindUserByEmailService,
+    private readonly createUserService: CreateUserService,
+    private readonly updateUserService: UpdateUserService,
     private readonly mailerService: MailerService,
   ) {}
 
   async login({ email, password }: AuthLoginDTO) {
-    const user = await this.userService.findByEmail(email);
+    // Usando o repositório de user em vez do service para ter o controle da exception.
+    const user = await this.userRepository.findByEmail(email);
     if (!user || !(await bcrypt.compare(password, user.password)))
       throw new UnauthorizedException('Invalid credentials.');
     return await this.generateJwtToken(user);
@@ -36,7 +46,7 @@ export class AuthService {
       password: body.password,
       role: body.role ?? Role.USER,
     };
-    const user = await this.userService.createUser(newUser);
+    const user = await this.createUserService.execute(newUser);
 
     return await this.generateJwtToken(user);
   }
@@ -44,16 +54,15 @@ export class AuthService {
   async resetPassword({ token, newPassword }: AuthResetPasswordDTO) {
     const { valid, decoded } = await this.validateToken(token);
     if (!valid) throw new UnauthorizedException('Invalid token.');
-    const user = await this.userService.updateUser(Number(decoded?.sub), {
+    const user = await this.updateUserService.execute(Number(decoded?.sub), {
       password: newPassword,
     });
 
     return await this.generateJwtToken(user);
   }
 
-  // Melhorar DTO
   async forgotPassword(email: string) {
-    const user = await this.userService.findByEmail(email);
+    const user = await this.findUserByEmailService.execute(email);
     const expiresIn = 1800;
     const token = await this.generateJwtToken(user, expiresIn);
 

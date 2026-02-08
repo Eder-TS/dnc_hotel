@@ -1,13 +1,21 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { AuthService } from 'src/modules/auth/auth.service';
-import { UserService } from 'src/modules/users/user.service';
+import type { IUserRepository } from 'src/modules/users/domain/repositories/IuserRepository';
+import { USER_REPOSITORY } from 'src/modules/users/utils/userRepository.token';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
+    @Inject(USER_REPOSITORY)
+    private readonly userRepository: IUserRepository,
+
     private readonly authService: AuthService,
-    private readonly userService: UserService,
   ) {}
   async canActivate(context: ExecutionContext) {
     // Aqui, diferente da aula, foi tipado o getRequest() pois o retorno padrão é any,
@@ -21,7 +29,8 @@ export class AuthGuard implements CanActivate {
     const { valid, decoded } = await this.authService.validateToken(token);
     if (!valid) return false;
 
-    const user = await this.userService.show(Number(decoded?.sub));
+    // Usando o repository pois não quero o tratamento de service.
+    const user = await this.userRepository.findById(Number(decoded?.sub));
     if (!user) return false;
 
     // Diferente da aula, tive que criar um tipo no Express com user dentro.

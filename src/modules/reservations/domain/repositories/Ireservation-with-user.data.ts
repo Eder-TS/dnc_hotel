@@ -1,5 +1,5 @@
 import { ReservationsStatus } from '@prisma/client';
-import { IUserSafeFieldsData } from 'src/modules/users/domain/repositories/Iuser-safe-fields.data';
+import { IUserSafeFieldsData } from 'src/modules/users/domain/repositories/IuserSafeFields.data';
 
 export interface IReservationWithUserData {
   id: number;
