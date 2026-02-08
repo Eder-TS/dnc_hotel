@@ -4,9 +4,7 @@ import { HOTEL_REPOSITORY } from '../utils/hotelRepository.token';
 import { FindAllHotelDTO } from '../domain/dto/findAllHotel.dto';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import Redis from 'ioredis';
-import { stringify } from 'querystring';
 import { REDIS_HOTEL_KEY } from '../utils/redisKey';
-import { Hotel } from '@prisma/client';
 import { AllHotelData } from '../domain/repositories/allHotel.data';
 
 @Injectable()

@@ -26,7 +26,7 @@ export class HotelsRepository implements IHotelRepository {
   findHotelByName(name: string): Promise<Hotel[] | null> {
     // findaMany pois podem ser retornados vários com nomes parecidos.
     return this.prisma.hotel.findMany({
-      // Query para busca de valores semelhantes, pois quem busca pode não sabrer o nome correto.
+      // Query para busca de valores semelhantes, pois quem busca pode não saber o nome correto.
       where: { name: { contains: name, mode: 'insensitive' } },
     });
   }
@@ -46,7 +46,7 @@ export class HotelsRepository implements IHotelRepository {
       skip: offset,
 
       // Aqui é usado o relacionamento de tabela para trazer o owner todo, não apenas o ID.
-      include: { owner: true },
+      include: { owner: { select: userSelectFields } },
     });
 
     const totalHotels = await this.prisma.hotel.count();
