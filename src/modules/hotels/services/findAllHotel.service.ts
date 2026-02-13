@@ -17,6 +17,7 @@ export class FindAllHotelService {
     private readonly redis: Redis,
   ) {}
 
+  // Descobrir por quê execue está exigindo os parâmetros que são opcionais.
   async execute({ page = 1, limit = 10 }: FindAllHotelDTO) {
     const offset = (page - 1) * limit;
 

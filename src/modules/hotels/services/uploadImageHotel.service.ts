@@ -22,7 +22,7 @@ export class UploadImageHotelService {
     if (!hotel)
       throw new HttpException('Hotel not found.', HttpStatus.NOT_FOUND);
 
-    const directory = resolve(process.cwd(), 'uploads-hotel');
+    const directory = resolve(process.cwd(), 'uploads-hoel');
     if (hotel.image) {
       const hotelImageFilePath = join(directory, hotel.image);
 

@@ -33,5 +33,5 @@ export class CreateHotelDto {
 
   @IsOptional()
   @IsNumber()
-  ownerId: number;
+  ownerId?: number;
 }
