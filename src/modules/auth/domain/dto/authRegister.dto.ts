@@ -9,17 +9,17 @@ export class AuthRegisterDTO extends PartialType(CreateUserDTO) {
   // professor está funcionando!
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
 
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  email!: string;
 
   @IsString()
   @IsNotEmpty()
-  password: string;
+  password!: string;
 
   @IsEnum(Role)
   @IsNotEmpty()
-  role: Role;
+  role!: Role;
 }

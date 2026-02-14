@@ -12,7 +12,7 @@ interface ITokenPayload {
 export class AuthValidTokenDTO {
   @IsBoolean()
   @IsNotEmpty()
-  valid: boolean;
+  valid!: boolean;
 
   decoded?: ITokenPayload;
 }

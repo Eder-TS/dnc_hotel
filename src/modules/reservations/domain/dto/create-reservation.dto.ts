@@ -11,15 +11,15 @@ import {
 export class CreateReservationDto {
   @IsNumber()
   @IsNotEmpty()
-  hotelId: number;
+  hotelId!: number;
 
   @IsString()
   @IsNotEmpty()
-  checkIn: string;
+  checkIn!: string;
 
   @IsString()
   @IsNotEmpty()
-  checkOut: string;
+  checkOut!: string;
 
   // Diferente do DTO de createUser, onde há o enum Role, aqui o eslint ficou reclamando
   // de não estar seguro quanto ao tipo de ReservationsStatus em @IsEnum(), então foi preciso fazer o cast

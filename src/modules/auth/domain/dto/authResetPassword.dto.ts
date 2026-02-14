@@ -3,9 +3,9 @@ import { IsJWT, IsNotEmpty, IsString } from 'class-validator';
 export class AuthResetPasswordDTO {
   @IsJWT()
   @IsNotEmpty()
-  token: string;
+  token!: string;
 
   @IsString()
   @IsNotEmpty()
-  newPassword: string;
+  newPassword!: string;
 }

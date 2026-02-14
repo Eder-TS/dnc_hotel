@@ -1,11 +1,11 @@
 import { Hotel } from '@prisma/client';
-import { CreateHotelDto } from '../dto/create-hotel.dto';
 import { UpdateHotelDto } from '../dto/update-hotel.dto';
 import { AllHotelData } from './allHotel.data';
 import { IHotelWithOwnerData } from './Ihotel-with-owner.data';
+import { ICreateHotelData } from './IcreateHotel.data';
 
 export interface IHotelRepository {
-  createHotel(data: CreateHotelDto): Promise<Hotel>;
+  createHotel(data: ICreateHotelData): Promise<Hotel>;
   findHotelById(id: number): Promise<IHotelWithOwnerData | null>;
   findHotelByName(name: string): Promise<Hotel[] | null>;
   findHotelByOwner(ownerId: number): Promise<Hotel | null>;

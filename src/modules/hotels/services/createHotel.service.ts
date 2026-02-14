@@ -6,6 +6,7 @@ import { HOTEL_REPOSITORY } from '../utils/hotelRepository.token';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import Redis from 'ioredis';
 import { REDIS_HOTEL_KEY } from '../utils/redisKey';
+import { ICreateHotelData } from '../domain/repositories/IcreateHotel.data';
 
 @Injectable()
 export class CreateHotelService {
@@ -22,7 +23,10 @@ export class CreateHotelService {
   async execute(ownerId: number, createHotelDto: CreateHotelDto) {
     await this.redis.del(REDIS_HOTEL_KEY);
 
-    createHotelDto.ownerId = ownerId;
-    return await this.hotelRepository.createHotel(createHotelDto);
+    const data: ICreateHotelData = {
+      ...createHotelDto,
+      ownerId,
+    };
+    return await this.hotelRepository.createHotel(data);
   }
 }

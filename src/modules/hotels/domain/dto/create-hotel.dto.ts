@@ -10,17 +10,17 @@ export class CreateHotelDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(255)
-  name: string;
+  name!: string;
 
   @IsNotEmpty()
   @IsString()
   @MaxLength(255)
-  description: string;
+  description!: string;
 
   @IsNotEmpty()
   @IsString()
   @MaxLength(255)
-  address: string;
+  address!: string;
 
   @IsString()
   @MaxLength(255)
@@ -29,7 +29,7 @@ export class CreateHotelDto {
 
   @IsNotEmpty()
   @IsNumber()
-  price: number;
+  price!: number;
 
   @IsOptional()
   @IsNumber()

@@ -12,24 +12,24 @@ import {
 export class UserSafeFieldsDTO {
   @IsNumber()
   @IsNotEmpty()
-  id: number;
+  id!: number;
 
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
 
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  email!: string;
 
   @IsEnum(Role)
   @IsNotEmpty()
-  role: Role;
+  role!: Role;
 
   @IsOptional()
   avatar?: string | null;
 
   @IsNotEmpty()
   @IsDate()
-  createdAt: Date;
+  createdAt!: Date;
 }
