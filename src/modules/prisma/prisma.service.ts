@@ -5,6 +5,7 @@ import { Pool } from 'pg';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
+  private pool: Pool;
   constructor() {
     const pool = new Pool({
       connectionString: process.env.DATABASE_URL,
@@ -12,6 +13,8 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     super({
       adapter: new PrismaPg(pool),
     });
+
+    this.pool = pool;
   }
 
   async onModuleInit() {
@@ -20,5 +23,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 
   async onApplicationShutdown() {
     await this.$disconnect();
+    // Isso é necessário para os testes e2e.
+    await this.pool.end();
   }
 }
