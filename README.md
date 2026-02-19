@@ -1,6 +1,6 @@
 ## Contexto da aula:
 Desenvolver uma aplicação para gestão de hotéis, onde ADMIN são os proprietários/administradores dos hotéis e USER são os hóspedes.
-11/1/26 Precisa melhorar os DTOS de user e auth.
+19/2/26 Foi copiada a collection do Postman do repositório do professor Tiago Lima, pode haver alguma diferença co relação a minha API.
 
 ---
 
