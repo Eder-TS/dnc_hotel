@@ -40,7 +40,7 @@ import { UploadAvatarUserService } from '../services/uploadAvatarUser.service';
 
 //Usando o UseGuard aqui todos os guards declarados como parâmetro irão atuar em todas as rotas.
 //Observar que a ordem da cada guard importa. Neste caso passar o AuthGuard e depois o RoleGuard.
-@UseGuards(AuthGuard, RoleGuard)
+//@UseGuards(AuthGuard, RoleGuard)
 // Aqui inserir o prefixo da rota.
 @Controller('users')
 export class UserController {
@@ -56,7 +56,7 @@ export class UserController {
   // Aplicando o limiter à esta rota.
   // Se usar o limiter globalmente no controller e quero deixar uma rota desprotegida
   // por qualquer motivo, então uso o @SkipThrottle().
-  @UseGuards(ThrottlerGuard)
+  @UseGuards(AuthGuard, ThrottlerGuard)
 
   // Posso alterar o status de retorno com o decorator @HttpCode(),
   // porém o código pode mudar o conteúdo da resposta.
@@ -93,9 +93,10 @@ export class UserController {
   // de usuário pode acessar a rota. O bloqueio será feito por um Guard. Foi inserido
   // como metadata. Mesmo que o guard seja global para este controller, apenas as rotas
   // que tiverem os metadados inseridos terão o Role verificado.
-  @Roles(client.Role.ADMIN)
+  //@Roles(client.Role.ADMIN)
   @Post()
   async createUser(@Body() body: CreateUserDTO) {
+    console.log('fumo');
     return await this.createUserService.execute(body);
   }
 
@@ -114,7 +115,7 @@ export class UserController {
 
   // Usado o Guard para validar a id se bate com userId.
   // User já foi lançado com AuthGuard para todo o controller.
-  @UseGuards(UserMatchGuard)
+  @UseGuards(AuthGuard, UserMatchGuard)
 
   // Após implementar o interceptor, posso aplicá-lo a qualquer rota (que ele faça sentido).
   @UseInterceptors(LoggingInterceptor)
@@ -123,6 +124,7 @@ export class UserController {
     return await this.deleteUserService.execute(id);
   }
 
+  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('avatar'), FileValidationInterceptor)
   @Post('avatar')
   async uploadAvatar(
@@ -140,7 +142,7 @@ export class UserController {
           }),
           new MaxFileSizeValidator({
             // Limitando o tamanho do arquivo.
-            maxSize: 7 * 1024,
+            maxSize: 1024 * 1024,
           }),
         ],
       }),

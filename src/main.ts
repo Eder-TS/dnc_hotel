@@ -25,6 +25,6 @@ async function bootstrap() {
   // então devo inserir o mesmo aqui no main:
   // app.useGlobalInterceptors(LoggingInteceptor) .
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 3333);
 }
 bootstrap();

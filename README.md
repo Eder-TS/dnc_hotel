@@ -1,6 +1,7 @@
 ## Contexto da aula:
 Desenvolver uma aplicação para gestão de hotéis, onde ADMIN são os proprietários/administradores dos hotéis e USER são os hóspedes.
 19/2/26 Foi copiada a collection do Postman do repositório do professor Tiago Lima, pode haver alguma diferença co relação a minha API.
+22/2/26 Necessário ajustar file size para avatar.
 
 ---
 
