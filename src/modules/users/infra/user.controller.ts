@@ -96,7 +96,6 @@ export class UserController {
   //@Roles(client.Role.ADMIN)
   @Post()
   async createUser(@Body() body: CreateUserDTO) {
-    console.log('fumo');
     return await this.createUserService.execute(body);
   }
 
