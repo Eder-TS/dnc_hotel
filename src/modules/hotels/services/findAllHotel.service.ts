@@ -7,6 +7,12 @@ import Redis from 'ioredis';
 import { REDIS_HOTEL_KEY } from '../utils/redisKey';
 import { AllHotelData } from '../domain/repositories/allHotel.data';
 
+// Necessário manipular o rediskey pois o valor estava fixo e voltava
+// sempre igual, sem considerar pagination.
+const getRedisCacheKey = (page: number, limit: number) => {
+  return `${REDIS_HOTEL_KEY}-page=${page}-limit=${limit}`;
+};
+
 @Injectable()
 export class FindAllHotelService {
   constructor(
@@ -23,7 +29,9 @@ export class FindAllHotelService {
 
     // Está diferente da aula pois criei uma interface de dados para enviar para o repositório.
     let data: AllHotelData = { hotels: [], totalHotels: 0 };
-    const hotelsRedis = await this.redis.get(REDIS_HOTEL_KEY);
+
+    const redisKey = getRedisCacheKey(page, limit);
+    const hotelsRedis = await this.redis.get(redisKey);
     if (hotelsRedis) {
       data.hotels = JSON.parse(hotelsRedis);
       data.totalHotels = data.hotels.length;
