@@ -9,6 +9,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HotelsModule } from './modules/hotels/hotels.module';
 import { ReservationsModule } from './modules/reservations/reservations.module';
 import { RedisModule } from '@nestjs-modules/ioredis';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 // Todos os módulos devem ser importados aqui para que sejam carregados pela aplicação.
 // Diferente da aula, tive de seguir a documentação do NestJS e trabalhar com
@@ -45,6 +47,15 @@ import { RedisModule } from '@nestjs-modules/ioredis';
     RedisModule.forRoot({
       type: 'single',
       url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+    }),
+
+    // Módulo para expor de forma estática a pasta uploads-hotel.
+    // Nativo do NestJS para servir uma URl direta para este tipo de recurso.
+    // No frontend apenas declaro em src http//:localhost:3333/uploads-hotel/nome-da-imagem.
+    // Atenção com o path: dist, docker, etc.
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', 'uploads-hotel'),
+      serveRoot: '/uploads-hotel',
     }),
   ],
   // Declarando um provider para que o throttler seja aplicado a toda a aplicação.
