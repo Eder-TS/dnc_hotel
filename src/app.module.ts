@@ -53,10 +53,16 @@ import { join } from 'path';
     // Nativo do NestJS para servir uma URl direta para este tipo de recurso.
     // No frontend apenas declaro em src http//:localhost:3333/uploads-hotel/nome-da-imagem.
     // Atenção com o path: dist, docker, etc.
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', '..', 'uploads-hotel'),
-      serveRoot: '/uploads-hotel',
-    }),
+    ServeStaticModule.forRoot(
+      {
+        rootPath: join(__dirname, '..', '..', 'uploads-hotel'),
+        serveRoot: '/uploads-hotel',
+      },
+      {
+        rootPath: join(__dirname, '..', '..', 'uploads'),
+        serveRoot: '/uploads',
+      },
+    ),
   ],
   // Declarando um provider para que o throttler seja aplicado a toda a aplicação.
   providers: [{ provide: 'APP_GUARD', useClass: ThrottlerGuard }],
