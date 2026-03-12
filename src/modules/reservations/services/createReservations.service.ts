@@ -37,7 +37,7 @@ export class CreateReservationsService {
         'Check-out date must be after check-in date.',
       );
 
-    const daysOfStay = differenceInDays(checkInDate, checkOutDate);
+    const daysOfStay = differenceInDays(checkOutDate, checkInDate);
 
     const hotel = await this.hotelRepository.findHotelById(
       createReservationDto.hotelId,
@@ -62,11 +62,17 @@ export class CreateReservationsService {
     // que volta a ficar raṕido. Porém o eslint reclama da Promise sem await. Melhores soluções envolvem o uso de
     // serviços desacoplados, uma função externa ou algo assim para um retorno rápido para quem fizer a request
     // e o serviço de email roda paralelo.
-    await this.mailerService.sendMail({
-      to: hotel.owner.email,
-      subject: 'Pending Reservation Approval',
-      html: templateHTMLSendReservationPending,
-    });
+
+    // Esta solução com void acalma o linter. O catch pode lidar com algum erro.
+    void this.mailerService
+      .sendMail({
+        to: hotel.owner.email,
+        subject: 'Pending Reservation Approval',
+        html: templateHTMLSendReservationPending,
+      })
+      .catch((error) => {
+        console.error('Error sending mail.', error);
+      });
 
     return reservation;
   }
