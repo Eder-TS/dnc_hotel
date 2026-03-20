@@ -79,7 +79,7 @@ export class UserController {
   }
 
   // Aqui usando uma configuração específica do limiter para esta rota.
-  @Throttle({ default: { limit: 3, ttl: 5000 } })
+  @Throttle({ default: { limit: 25, ttl: 5000 } })
 
   // Posso desestruturar params com o decorator (como está abaixo),
   // ou @Param() params: string[] e passar para o método params.id.
