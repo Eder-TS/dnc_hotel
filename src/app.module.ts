@@ -30,7 +30,7 @@ import { join } from 'path';
     ThrottlerModule.forRoot([
       {
         ttl: 60000, // tempo em milissegundos
-        limit: 10, // requisições
+        limit: 20, // requisições
       },
     ]),
 
