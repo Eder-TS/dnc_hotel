@@ -62,7 +62,7 @@ model Reservation {
   userId Int
   user User @relation(fields: [userId], references: [id])
   hotelId Int
-  hotelid Hotel @relation(fields: [hotelId], references: [id])
+  hotel Hotel @relation(fields: [hotelId], references: [id])
   checkIn DateTime
   checkOut DateTime
   total Float
