@@ -16,6 +16,8 @@ import { UploadAvatarUserService } from './services/uploadAvatarUser.service';
 import { InternalIdUserExistsService } from './services/internalIdUserExists.service';
 import { UserRepository } from './infra/user.repository';
 import { USER_REPOSITORY } from './utils/userRepository.token';
+import { ReservationsModule } from '../reservations/reservations.module';
+import { ShowUserWithLastReservationService } from './services/showUserWithLastReservation.service';
 
 @Module({
   // forwardRef para resolver dependências circulares
@@ -23,6 +25,7 @@ import { USER_REPOSITORY } from './utils/userRepository.token';
     PrismaModule,
     forwardRef(() => SharedModule),
     forwardRef(() => AuthModule),
+    forwardRef(() => ReservationsModule),
     MulterModule.register({
       storage: diskStorage({
         destination: './uploads',
@@ -36,6 +39,7 @@ import { USER_REPOSITORY } from './utils/userRepository.token';
   providers: [
     ListUserService,
     ShowUserService,
+    ShowUserWithLastReservationService,
     FindUserByEmailService,
     CreateUserService,
     UpdateUserService,

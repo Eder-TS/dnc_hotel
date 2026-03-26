@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ReservationsController } from '../reservations/infra/reservations.controller';
 import { CreateReservationsService } from './services/createReservations.service';
 import { RESERVATIONS_REPOSITORY } from './utils/hotelRepository.token';
@@ -12,7 +12,12 @@ import { FindReservationsByIdService } from './services/findReservationsById.ser
 import { FindReservationsByUserService } from './services/findReservationsByUser.service';
 import { UpdateReservationsStatusService } from './services/updateReservationsStatus.service';
 @Module({
-  imports: [PrismaModule, AuthModule, UserModule, HotelsModule],
+  imports: [
+    PrismaModule,
+    AuthModule,
+    HotelsModule,
+    forwardRef(() => UserModule),
+  ],
   controllers: [ReservationsController],
   providers: [
     CreateReservationsService,
@@ -26,5 +31,6 @@ import { UpdateReservationsStatusService } from './services/updateReservationsSt
     // e o devido módulo deve ser importado aqui.
     { provide: RESERVATIONS_REPOSITORY, useClass: ReservationsRepository },
   ],
+  exports: [RESERVATIONS_REPOSITORY],
 })
 export class ReservationsModule {}

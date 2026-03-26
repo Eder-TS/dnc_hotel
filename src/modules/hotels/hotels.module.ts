@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { HotelsController } from './infra/hotels.controller';
 import { CreateHotelService } from './services/createHotel.service';
 import { FindAllHotelService } from './services/findAllHotel.service';
@@ -21,7 +21,10 @@ import { UploadImageHotelService } from './services/uploadImageHotel.service';
   imports: [
     PrismaModule,
     AuthModule,
-    UserModule,
+
+    // Não há HotelModule em UserModule, mas há HotelModule em ReservationsModule
+    // que tem referência circular com UserModule.
+    forwardRef(() => UserModule),
     MulterModule.register({
       storage: diskStorage({
         destination: './uploads-hotel',

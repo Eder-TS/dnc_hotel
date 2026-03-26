@@ -25,7 +25,10 @@ export class UserRepository implements IUserRepository {
   }
 
   findById(id: number): Promise<IUserSafeFieldsData | null> {
-    return this.prisma.user.findUnique({ where: { id } });
+    return this.prisma.user.findUnique({
+      where: { id },
+      select: userSelectFields,
+    });
   }
 
   findByEmail(email: string): Promise<User | null> {

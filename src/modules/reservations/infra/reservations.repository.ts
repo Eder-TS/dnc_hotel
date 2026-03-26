@@ -6,6 +6,8 @@ import { ICreateReservationsData } from '../domain/repositories/Icreate-reservat
 import { IUpdateReservationsData } from '../domain/repositories/Iupdate-reservations.data';
 import { userSelectFields } from 'src/modules/users/infra/prisma/userSelectFields';
 import { IReservationWithUserData } from '../domain/repositories/Ireservation-with-user.data';
+import { IReservationWithHotelData } from '../domain/repositories/Ireservation-with-hotel.data';
+import { hotelSelectFields } from 'src/modules/hotels/infra/prisma/hotelSelectFields';
 
 @Injectable()
 export class ReservationsRepository implements IReservationsRepository {
@@ -28,6 +30,17 @@ export class ReservationsRepository implements IReservationsRepository {
 
   findByUser(userId: number): Promise<Reservation[]> {
     return this.prisma.reservation.findMany({ where: { userId } });
+  }
+
+  findLastReservation(userId: number): Promise<IReservationWithHotelData[]> {
+    return this.prisma.reservation.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      take: 1,
+      include: {
+        hotel: { select: hotelSelectFields },
+      },
+    });
   }
 
   updateStatus(data: IUpdateReservationsData): Promise<Reservation> {

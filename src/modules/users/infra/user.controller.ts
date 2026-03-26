@@ -34,6 +34,7 @@ import { UpdateUserService } from '../services/updateUser.service';
 import { UpdateUserDTO } from '../domain/dto/updateUser.dto';
 import { DeleteUserService } from '../services/deleteUser.service';
 import { UploadAvatarUserService } from '../services/uploadAvatarUser.service';
+import { ShowUserWithLastReservationService } from '../services/showUserWithLastReservation.service';
 
 // Inserido o interceptor aqui antes do controller, ele será aplicado para todas as rotas.
 //@UseInterceptors(LoggingInterceptor)
@@ -47,6 +48,7 @@ export class UserController {
   constructor(
     private readonly listUserService: ListUserService,
     private readonly showUserService: ShowUserService,
+    private readonly showUserWithLastReservationService: ShowUserWithLastReservationService,
     private readonly createUserService: CreateUserService,
     private readonly updateUserService: UpdateUserService,
     private readonly deleteUserService: DeleteUserService,
@@ -87,6 +89,13 @@ export class UserController {
   @Get(':id')
   async show(@ParamId() id: number) {
     return await this.showUserService.execute(id);
+  }
+
+  // Rota criada no desenvolvimento do frontend para satisfazer uma demanda de lá.
+  @UseGuards(AuthGuard, UserMatchGuard)
+  @Get('/profile/:id')
+  async getProfile(@ParamId() id: number) {
+    return await this.showUserWithLastReservationService.execute(id);
   }
 
   // Usando o decorator @Roles() criado em aula para inserir no context qual tipo
