@@ -25,6 +25,7 @@ export class ShowUserWithLastReservationService {
       email: user.email,
       avatar: user.avatar,
       role: user.role,
+      createdAt: user.createdAt,
       lastReservation,
     };
 
