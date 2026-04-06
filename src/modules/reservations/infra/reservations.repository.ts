@@ -35,7 +35,7 @@ export class ReservationsRepository implements IReservationsRepository {
   findLastReservation(userId: number): Promise<IReservationWithHotelData[]> {
     return this.prisma.reservation.findMany({
       where: { userId },
-      orderBy: { checkIn: 'desc' },
+      orderBy: { id: 'desc' },
       take: 1,
       include: {
         hotel: { select: hotelSelectFields },
