@@ -110,7 +110,7 @@ export class UserController {
 
   // Usado o Guard para validar a id se bate com userId.
   // User já foi lançado com AuthGuard para todo o controller.
-  @UseGuards(UserMatchGuard)
+  @UseGuards(AuthGuard, UserMatchGuard)
 
   // Usando intercepatdor ParseIntPipe para já parsear a id.
   @Patch(':id')
