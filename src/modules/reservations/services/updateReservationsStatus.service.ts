@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateReservationDto } from '../domain/dto/update-reservation.dto';
-import { RESERVATIONS_REPOSITORY } from '../utils/hotelRepository.token';
+import { RESERVATIONS_REPOSITORY } from '../utils/reservationsRepository.token';
 import type { IReservationsRepository } from '../domain/repositories/Ireservations.repository';
 import { MailerService } from '@nestjs-modules/mailer';
 import { templateHTMLSendReservationUpdate } from '../utils/templateHTMLSendReservationUpdate';

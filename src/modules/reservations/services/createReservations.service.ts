@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateReservationDto } from '../domain/dto/create-reservation.dto';
-import { RESERVATIONS_REPOSITORY } from '../utils/hotelRepository.token';
+import { RESERVATIONS_REPOSITORY } from '../utils/reservationsRepository.token';
 import type { IReservationsRepository } from '../domain/repositories/Ireservations.repository';
 import { parseISO, differenceInDays } from 'date-fns';
 import type { IHotelRepository } from 'src/modules/hotels/domain/repositories/Ihotel.repository';

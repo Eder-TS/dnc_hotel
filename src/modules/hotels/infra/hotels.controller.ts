@@ -23,7 +23,7 @@ import { RemoveHotelService } from '../services/removeHotel.service';
 import { FindAllHotelService } from '../services/findAllHotel.service';
 import { FindHotelByIdService } from '../services/findHotelById.service';
 import { FindHotelByNameService } from '../services/findHotelByName.service';
-import { FindHotelByOwnerService } from '../services/findHotelByOwner.service';
+import { FindHotelsByOwnerService } from '../services/findHotelsByOwner.service';
 import { ParamId } from 'src/shared/decorators/paramId.decorator';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { RoleGuard } from 'src/shared/guards/role.guard';
@@ -43,7 +43,7 @@ export class HotelsController {
     private readonly findAllHotelService: FindAllHotelService,
     private readonly findHotelById: FindHotelByIdService,
     private readonly findHotelByName: FindHotelByNameService,
-    private readonly findHotelByOwner: FindHotelByOwnerService,
+    private readonly findHotelsByOwner: FindHotelsByOwnerService,
     private readonly removeHotelService: RemoveHotelService,
     private readonly updateHotelService: UpdateHotelService,
     private readonly uploadImageHotelService: UploadImageHotelService,
@@ -74,7 +74,7 @@ export class HotelsController {
   @Roles(Role.ADMIN)
   @Get('owner')
   findByOwner(@User('id') id: number) {
-    return this.findHotelByOwner.execute(id);
+    return this.findHotelsByOwner.execute(id);
   }
 
   // As rotas que recebem id como parâmetros devem ficar abaixo daquelas estáticas e que recebem owner

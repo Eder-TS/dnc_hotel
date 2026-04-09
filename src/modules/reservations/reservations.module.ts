@@ -1,7 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { ReservationsController } from '../reservations/infra/reservations.controller';
 import { CreateReservationsService } from './services/createReservations.service';
-import { RESERVATIONS_REPOSITORY } from './utils/hotelRepository.token';
+import { RESERVATIONS_REPOSITORY } from './utils/reservationsRepository.token';
 import { ReservationsRepository } from './infra/reservations.repository';
 import { PrismaModule } from '../prisma/prisma.module';
 import { AuthModule } from '../auth/auth.module';

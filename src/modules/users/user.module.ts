@@ -17,7 +17,8 @@ import { InternalIdUserExistsService } from './services/internalIdUserExists.ser
 import { UserRepository } from './infra/user.repository';
 import { USER_REPOSITORY } from './utils/userRepository.token';
 import { ReservationsModule } from '../reservations/reservations.module';
-import { ShowUserWithLastReservationService } from './services/showUserWithLastReservation.service';
+import { ShowUserWithDataService } from './services/showUserWithData.service';
+import { HotelsModule } from '../hotels/hotels.module';
 
 @Module({
   // forwardRef para resolver dependências circulares
@@ -25,6 +26,7 @@ import { ShowUserWithLastReservationService } from './services/showUserWithLastR
     PrismaModule,
     forwardRef(() => SharedModule),
     forwardRef(() => AuthModule),
+    forwardRef(() => HotelsModule),
     forwardRef(() => ReservationsModule),
     MulterModule.register({
       storage: diskStorage({
@@ -39,7 +41,7 @@ import { ShowUserWithLastReservationService } from './services/showUserWithLastR
   providers: [
     ListUserService,
     ShowUserService,
-    ShowUserWithLastReservationService,
+    ShowUserWithDataService,
     FindUserByEmailService,
     CreateUserService,
     UpdateUserService,

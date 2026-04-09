@@ -9,7 +9,7 @@ import { HOTEL_REPOSITORY } from './utils/hotelRepository.token';
 import { HotelsRepository } from './infra/hotels.repository';
 import { PrismaModule } from '../prisma/prisma.module';
 import { FindHotelByNameService } from './services/findHotelByName.service';
-import { FindHotelByOwnerService } from './services/findHotelByOwner.service';
+import { FindHotelsByOwnerService } from './services/findHotelsByOwner.service';
 import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../users/user.module';
 import { MulterModule } from '@nestjs/platform-express';
@@ -24,6 +24,8 @@ import { UploadImageHotelService } from './services/uploadImageHotel.service';
 
     // Não há HotelModule em UserModule, mas há HotelModule em ReservationsModule
     // que tem referência circular com UserModule.
+    // A frase acima era verdade até ser refatorada a função FindHotelsByOwnerService e utilizada em
+    // UserModule, mas o aviso ainda é válido para a situação anterior.
     forwardRef(() => UserModule),
     MulterModule.register({
       storage: diskStorage({
@@ -41,7 +43,7 @@ import { UploadImageHotelService } from './services/uploadImageHotel.service';
     FindAllHotelService,
     FindHotelByIdService,
     FindHotelByNameService,
-    FindHotelByOwnerService,
+    FindHotelsByOwnerService,
     RemoveHotelService,
     UpdateHotelService,
     UploadImageHotelService,
@@ -52,7 +54,11 @@ import { UploadImageHotelService } from './services/uploadImageHotel.service';
     },
   ],
 
-  // Exportando o token para poder ser usado fora do módulo.
-  exports: [HOTEL_REPOSITORY],
+  exports: [
+    FindHotelsByOwnerService,
+
+    // Exportando o token para poder ser usado fora do módulo.
+    HOTEL_REPOSITORY,
+  ],
 })
 export class HotelsModule {}

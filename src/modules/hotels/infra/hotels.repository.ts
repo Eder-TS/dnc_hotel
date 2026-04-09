@@ -7,6 +7,8 @@ import { AllHotelData } from '../domain/repositories/allHotel.data';
 import { userSelectFields } from 'src/modules/users/infra/prisma/userSelectFields';
 import { IHotelWithOwnerData } from '../domain/repositories/Ihotel-with-owner.data';
 import { ICreateHotelData } from '../domain/repositories/IcreateHotel.data';
+import { IHotelData } from '../domain/repositories/Ihotel.data';
+import { hotelSelectFields } from './prisma/hotelSelectFields';
 
 @Injectable()
 export class HotelsRepository implements IHotelRepository {
@@ -31,9 +33,10 @@ export class HotelsRepository implements IHotelRepository {
     });
   }
 
-  findHotelByOwner(ownerId: number): Promise<Hotel | null> {
-    return this.prisma.hotel.findFirst({
+  findHotelsByOwner(ownerId: number): Promise<IHotelData[]> {
+    return this.prisma.hotel.findMany({
       where: { ownerId },
+      select: hotelSelectFields,
     });
   }
 
