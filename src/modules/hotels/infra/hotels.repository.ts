@@ -2,13 +2,13 @@ import { Hotel } from '@prisma/client';
 import { IHotelRepository } from '../domain/repositories/Ihotel.repository';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { UpdateHotelDto } from '../domain/dto/update-hotel.dto';
 import { AllHotelData } from '../domain/repositories/allHotel.data';
 import { userSelectFields } from 'src/modules/users/infra/prisma/userSelectFields';
 import { IHotelWithOwnerData } from '../domain/repositories/Ihotel-with-owner.data';
 import { ICreateHotelData } from '../domain/repositories/IcreateHotel.data';
 import { IHotelData } from '../domain/repositories/Ihotel.data';
 import { hotelSelectFields } from './prisma/hotelSelectFields';
+import { IUpdateHotelData } from '../domain/repositories/Iupdate-hotel.data';
 
 @Injectable()
 export class HotelsRepository implements IHotelRepository {
@@ -57,7 +57,7 @@ export class HotelsRepository implements IHotelRepository {
     return { hotels, totalHotels };
   }
 
-  updateHotel(id: number, data: UpdateHotelDto): Promise<Hotel> {
+  updateHotel(id: number, data: IUpdateHotelData): Promise<Hotel> {
     return this.prisma.hotel.update({
       where: { id },
       data,

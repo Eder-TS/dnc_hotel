@@ -34,6 +34,7 @@ import { User } from 'src/shared/decorators/user.decorator';
 import { UploadImageHotelService } from '../services/uploadImageHotel.service';
 import { FileValidationInterceptor } from 'src/shared/interceptors/fileValidation.interceptor';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CentsToPrice } from 'src/shared/interceptors/centsToPrice.interceptor';
 
 @UseGuards(AuthGuard, RoleGuard)
 @Controller('hotels')
@@ -50,6 +51,7 @@ export class HotelsController {
   ) {}
 
   @Roles(Role.ADMIN)
+  @UseInterceptors(CentsToPrice)
   @Post()
   create(@User('id') ownerId: number, @Body() createHotelDto: CreateHotelDto) {
     return this.createHotelService.execute(ownerId, createHotelDto);
@@ -58,6 +60,7 @@ export class HotelsController {
   // Rota: localhost:3000/hotels <- retorna tudo
   // Rota: localhost:3000/hotels?page=x&limit=y <- retorna a página com olimite dado.
   @Roles(Role.ADMIN, Role.USER)
+  @UseInterceptors(CentsToPrice)
   @Get()
   findAll(@Query() query) {
     const page = query.page;
@@ -66,12 +69,14 @@ export class HotelsController {
   }
 
   @Roles(Role.ADMIN, Role.USER)
+  @UseInterceptors(CentsToPrice)
   @Get('name')
   findByName(@Query('name') name: string) {
     return this.findHotelByName.execute(name);
   }
 
   @Roles(Role.ADMIN)
+  @UseInterceptors(CentsToPrice)
   @Get('owner')
   findByOwner(@User('id') id: number) {
     return this.findHotelsByOwner.execute(id);
@@ -80,6 +85,7 @@ export class HotelsController {
   // As rotas que recebem id como parâmetros devem ficar abaixo daquelas estáticas e que recebem owner
   // para não haver conflitos.
   @Roles(Role.ADMIN, Role.USER)
+  @UseInterceptors(CentsToPrice)
   @Get(':id')
   findById(@ParamId('id') id: number) {
     return this.findHotelById.execute(id);
@@ -87,6 +93,7 @@ export class HotelsController {
 
   @UseGuards(OwnerHotelGuard)
   @Roles(Role.ADMIN)
+  @UseInterceptors(CentsToPrice)
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
@@ -95,7 +102,11 @@ export class HotelsController {
     return this.updateHotelService.execute(id, updateHotelDto);
   }
 
-  @UseInterceptors(FileInterceptor('imageHotel'), FileValidationInterceptor)
+  @UseInterceptors(
+    FileInterceptor('imageHotel'),
+    FileValidationInterceptor,
+    CentsToPrice,
+  )
   @Patch('images/:hotelId')
   uploadImage(
     @Param('hotelId', ParseIntPipe) id: number,

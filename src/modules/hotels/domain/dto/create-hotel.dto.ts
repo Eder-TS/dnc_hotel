@@ -28,8 +28,8 @@ export class CreateHotelDto {
   image?: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  price!: number;
+  @IsString()
+  price!: string;
 
   @IsOptional()
   @IsNumber()

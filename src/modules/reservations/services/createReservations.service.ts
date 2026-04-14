@@ -27,7 +27,6 @@ export class CreateReservationsService {
     private readonly mailerService: MailerService,
   ) {}
 
-  // Precisa resolver valor negativo.
   async execute(userId: number, createReservationDto: CreateReservationDto) {
     const checkInDate = parseISO(createReservationDto.checkIn);
     const checkOutDate = parseISO(createReservationDto.checkOut);
@@ -44,12 +43,13 @@ export class CreateReservationsService {
     );
     if (!hotel) throw new NotFoundException('Hotel not found.');
 
+    // Aqui não é preciso tratar o valor de reservation para salvar no BD pois price vem direto do repository
+    // e já vem no formato esperado pelo BD.
     const total = daysOfStay * hotel.price;
     const newReservation: ICreateReservationsData = {
       ...createReservationDto,
       checkIn: checkInDate,
       checkOut: checkOutDate,
-      // Precisa resolver valor negativo.
       total: total,
       userId: userId,
       status: ReservationsStatus.PENDING,

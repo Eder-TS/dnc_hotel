@@ -7,6 +7,7 @@ import { InjectRedis } from '@nestjs-modules/ioredis';
 import Redis from 'ioredis';
 import { REDIS_HOTEL_KEY } from '../utils/redisKey';
 import { ICreateHotelData } from '../domain/repositories/IcreateHotel.data';
+import { PriceToCents } from '../utils/priceToCents';
 
 @Injectable()
 export class CreateHotelService {
@@ -25,6 +26,7 @@ export class CreateHotelService {
 
     const data: ICreateHotelData = {
       ...createHotelDto,
+      price: PriceToCents(createHotelDto.price),
       ownerId,
     };
     return await this.hotelRepository.createHotel(data);

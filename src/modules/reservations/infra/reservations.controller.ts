@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { CreateReservationsService } from '../services/createReservations.service';
 import { CreateReservationDto } from '../domain/dto/create-reservation.dto';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
@@ -11,6 +19,7 @@ import { ReservationsStatus, Role } from '@prisma/client';
 import { UpdateReservationsStatusService } from '../services/updateReservationsStatus.service';
 import { RoleGuard } from 'src/shared/guards/role.guard';
 import { Roles } from 'src/shared/decorators/role.decorators';
+import { CentsToPrice } from 'src/shared/interceptors/centsToPrice.interceptor';
 
 @UseGuards(AuthGuard, RoleGuard)
 @Controller('reservations')
@@ -24,28 +33,33 @@ export class ReservationsController {
   ) {}
 
   @Roles(Role.USER)
+  @UseInterceptors(CentsToPrice)
   @Post()
   create(@User('id') userId: number, @Body() body: CreateReservationDto) {
     return this.createReservationsService.execute(userId, body);
   }
 
+  @UseInterceptors(CentsToPrice)
   @Get()
   findAll() {
     return this.findAllReservationsService.execute();
   }
 
   @Roles(Role.USER)
+  @UseInterceptors(CentsToPrice)
   @Get('user')
   findByUser(@User('id') userId: number) {
     return this.findReservationsByUserService.execute(userId);
   }
 
+  @UseInterceptors(CentsToPrice)
   @Get(':id')
   findById(@ParamId() id: number) {
     return this.findReservationsByIdService.execute(id);
   }
 
   @Roles(Role.ADMIN)
+  @UseInterceptors(CentsToPrice)
   @Patch(':id')
   update(@ParamId() id: number, @Body('status') status: ReservationsStatus) {
     return this.updateReservationsStatusService.execute({ id, status });

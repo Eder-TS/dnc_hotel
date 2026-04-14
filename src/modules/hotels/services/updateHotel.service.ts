@@ -5,6 +5,8 @@ import type { IHotelRepository } from '../domain/repositories/Ihotel.repository'
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import Redis from 'ioredis';
 import { REDIS_HOTEL_KEY } from '../utils/redisKey';
+import { PriceToCents } from '../utils/priceToCents';
+import { IUpdateHotelData } from '../domain/repositories/Iupdate-hotel.data';
 
 @Injectable()
 export class UpdateHotelService {
@@ -18,6 +20,14 @@ export class UpdateHotelService {
 
   async execute(id: number, updateHotelDto: UpdateHotelDto) {
     await this.redis.del(REDIS_HOTEL_KEY);
-    return await this.hotelRepository.updateHotel(id, updateHotelDto);
+
+    const data: IUpdateHotelData = {
+      ...updateHotelDto,
+      price: updateHotelDto.price
+        ? PriceToCents(updateHotelDto.price)
+        : undefined,
+    };
+
+    return await this.hotelRepository.updateHotel(id, data);
   }
 }
