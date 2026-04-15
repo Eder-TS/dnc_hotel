@@ -17,7 +17,9 @@ export class CentsToPrice implements NestInterceptor {
   }
 
   private transform(data: any): any {
-    if (data === null || data === undefined) return data;
+    // Melhorada a exclusão de data pois objetos Date estavam sendo processados.
+    if (data === null || data === undefined || data instanceof Date)
+      return data;
 
     if (Array.isArray(data)) {
       return data.map((item) => this.transform(item));
