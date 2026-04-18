@@ -11,6 +11,7 @@ import { FindAllReservationsService } from './services/findAllReservations.servi
 import { FindReservationsByIdService } from './services/findReservationsById.service';
 import { FindReservationsByUserService } from './services/findReservationsByUser.service';
 import { UpdateReservationsStatusService } from './services/updateReservationsStatus.service';
+import { FindReservationsByHotelService } from './services/findReservationsByHotel.service';
 @Module({
   imports: [
     PrismaModule,
@@ -24,6 +25,7 @@ import { UpdateReservationsStatusService } from './services/updateReservationsSt
     FindAllReservationsService,
     FindReservationsByIdService,
     FindReservationsByUserService,
+    FindReservationsByHotelService,
     UpdateReservationsStatusService,
 
     // Não é necessário declarar aqui o token de hotel ou qualquer outro

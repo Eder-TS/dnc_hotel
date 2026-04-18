@@ -20,6 +20,7 @@ import { UpdateReservationsStatusService } from '../services/updateReservationsS
 import { RoleGuard } from 'src/shared/guards/role.guard';
 import { Roles } from 'src/shared/decorators/role.decorators';
 import { CentsToPrice } from 'src/shared/interceptors/centsToPrice.interceptor';
+import { FindReservationsByHotelService } from '../services/findReservationsByHotel.service';
 
 @UseGuards(AuthGuard, RoleGuard)
 @Controller('reservations')
@@ -29,6 +30,7 @@ export class ReservationsController {
     private readonly findAllReservationsService: FindAllReservationsService,
     private readonly findReservationsByIdService: FindReservationsByIdService,
     private readonly findReservationsByUserService: FindReservationsByUserService,
+    private readonly findReservationsByHotelService: FindReservationsByHotelService,
     private readonly updateReservationsStatusService: UpdateReservationsStatusService,
   ) {}
 
@@ -50,6 +52,13 @@ export class ReservationsController {
   @Get('user')
   findByUser(@User('id') userId: number) {
     return this.findReservationsByUserService.execute(userId);
+  }
+
+  @Roles(Role.ADMIN)
+  @UseInterceptors(CentsToPrice)
+  @Get('hotel/:id')
+  findByHotel(@ParamId() hotelId: number) {
+    return this.findReservationsByHotelService.execute(hotelId);
   }
 
   @UseInterceptors(CentsToPrice)

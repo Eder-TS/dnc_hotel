@@ -43,6 +43,16 @@ export class ReservationsRepository implements IReservationsRepository {
     });
   }
 
+  findByHotel(hotelId: number): Promise<IReservationWithHotelData[]> {
+    return this.prisma.reservation.findMany({
+      where: { hotelId },
+      include: {
+        hotel: { select: hotelSelectFields },
+        user: { select: userSelectFields },
+      },
+    });
+  }
+
   updateStatus(data: IUpdateReservationsData): Promise<Reservation> {
     return this.prisma.reservation.update({
       where: { id: data.id },

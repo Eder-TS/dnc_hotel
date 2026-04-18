@@ -1,5 +1,6 @@
 import { ReservationsStatus } from '@prisma/client';
 import { IHotelData } from 'src/modules/hotels/domain/repositories/Ihotel.data';
+import { IUserWithData } from 'src/modules/users/domain/repositories/IuserWith.data';
 
 export interface IReservationWithHotelData {
   id: number;
@@ -12,4 +13,5 @@ export interface IReservationWithHotelData {
   createdAt: Date;
   updatedAt: Date;
   hotel: IHotelData;
+  user?: IUserWithData;
 }
