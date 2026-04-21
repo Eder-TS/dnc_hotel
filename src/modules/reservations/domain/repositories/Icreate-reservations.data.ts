@@ -7,5 +7,5 @@ export interface ICreateReservationsData {
   checkOut: Date;
   status: ReservationsStatus;
   userId: number;
-  total: number;
+  amount: number;
 }

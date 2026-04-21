@@ -65,7 +65,7 @@ model Reservation {
   hotel Hotel @relation(fields: [hotelId], references: [id])
   checkIn DateTime
   checkOut DateTime
-  total Float
+  amount Float
   status ReservationsStatus @default(PENDING)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

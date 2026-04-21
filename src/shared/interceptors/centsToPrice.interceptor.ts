@@ -43,6 +43,6 @@ export class CentsToPrice implements NestInterceptor {
   }
 
   private isPriceField(key: string, value: any): boolean {
-    return typeof value === 'number' && ['price', 'total'].includes(key);
+    return typeof value === 'number' && ['price', 'amount'].includes(key);
   }
 }

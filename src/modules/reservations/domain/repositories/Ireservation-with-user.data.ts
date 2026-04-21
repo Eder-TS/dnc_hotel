@@ -8,7 +8,7 @@ export interface IReservationWithUserData {
   hotelId: number;
   checkIn: Date;
   checkOut: Date;
-  total: number;
+  amount: number;
   status: ReservationsStatus;
   createdAt: Date;
   updatedAt: Date;

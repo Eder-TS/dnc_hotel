@@ -45,12 +45,12 @@ export class CreateReservationsService {
 
     // Aqui não é preciso tratar o valor de reservation para salvar no BD pois price vem direto do repository
     // e já vem no formato esperado pelo BD.
-    const total = daysOfStay * hotel.price;
+    const amount = daysOfStay * hotel.price;
     const newReservation: ICreateReservationsData = {
       ...createReservationDto,
       checkIn: checkInDate,
       checkOut: checkOutDate,
-      total: total,
+      amount: amount,
       userId: userId,
       status: ReservationsStatus.PENDING,
     };
