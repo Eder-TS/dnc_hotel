@@ -46,7 +46,7 @@ import { join } from 'path';
     ReservationsModule,
     RedisModule.forRoot({
       type: 'single',
-      url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+      url: `${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
     }),
 
     // Módulo para expor de forma estática a pasta uploads-hotel.
