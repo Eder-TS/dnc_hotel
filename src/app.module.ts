@@ -11,6 +11,7 @@ import { ReservationsModule } from './modules/reservations/reservations.module';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { AppController } from './app.controller';
 
 // Todos os módulos devem ser importados aqui para que sejam carregados pela aplicação.
 // Diferente da aula, tive de seguir a documentação do NestJS e trabalhar com
@@ -66,5 +67,6 @@ import { join } from 'path';
   ],
   // Declarando um provider para que o throttler seja aplicado a toda a aplicação.
   providers: [{ provide: 'APP_GUARD', useClass: ThrottlerGuard }],
+  controllers: [AppController],
 })
 export class AppModule {}
