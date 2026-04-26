@@ -6,8 +6,6 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors();
-
   // Para interceptar os erros dos validadores.
   app.useGlobalPipes(new ValidationPipe());
 
@@ -15,7 +13,7 @@ async function bootstrap() {
   // Posso apenas usar enableCors sem parâmetros para qualquer cliente acessar ou
   // posso especificar alguns parâmetros para limitar os endereços e métodos de acesso.
   app.enableCors({
-    origin: 'http://localhost:3001',
+    origin: 'http://dnc-hotel-ui-ke76.vercel.app',
     methods: 'GET, PATCH, POST, DELETE',
     //allowedHeaders: 'Content-type, Accept',
     //credentials: true,
