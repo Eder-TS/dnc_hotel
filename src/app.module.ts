@@ -47,7 +47,7 @@ import { AppController } from './app.controller';
     ReservationsModule,
     RedisModule.forRoot({
       type: 'single',
-      url: `${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+      url: `${process.env.REDIS_URL}`,
     }),
 
     // Módulo para expor de forma estática a pasta uploads-hotel.
