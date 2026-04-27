@@ -2,12 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import 'dotenv/config';
 import { ValidationPipe } from '@nestjs/common';
-import dns from 'dns';
-async function bootstrap() {
-  dns.lookup('valkey-3e181491-hoteldncapi.c.aivencloud.com', (err, address) => {
-    console.log('DNS RESULT:', err || address);
-  });
 
+async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Para interceptar os erros dos validadores.
