@@ -23,6 +23,10 @@ async function bootstrap() {
   // então devo inserir o mesmo aqui no main:
   // app.useGlobalInterceptors(LoggingInteceptor) .
 
+  console.log('REDIS_URL =>', process.env.REDIS_URL);
+  console.log('REDIS_HOST =>', process.env.REDIS_HOST);
+  console.log('REDIS_PORT =>', process.env.REDIS_PORT);
+
   await app.listen(process.env.PORT ?? 3333);
 }
 bootstrap();
